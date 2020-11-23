@@ -8,24 +8,35 @@ import android.view.View;
 import android.widget.Button;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.material.tabs.TabLayout;
+
+import java.util.ArrayList;
 
 public class StilMain extends AppCompatActivity {
     private Context mContext;
     private TabLayout tabs;
+    ViewPager viewPager;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.stil_main);
-
         mContext = getApplicationContext();
 
         tabs = (TabLayout) findViewById(R.id.tabs);
-    }
+        viewPager = findViewById(R.id.view_pager);
+        ViewpagerAdapter adapter = new ViewpagerAdapter(getSupportFragmentManager());
+        viewPager.setAdapter(adapter);
+        tabs.setupWithViewPager(viewPager);
 
-    private View createTabView(String tabName) {
-        View tabView = LayoutInflater.from(mContext).inflate(R.layout.custom_tab, null);
-        return tabView;
+        ArrayList<Integer> frag = new ArrayList<>();
+        frag.add(R.drawable.my_on);
+        frag.add(R.drawable.stil_on);
+        frag.add(R.drawable.bookmark_off);
+
+        for (int i = 0; i < 3; i++) {
+            tabs.getTabAt(i).setIcon(frag.get(i));
+        }
     }
 }
