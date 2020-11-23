@@ -14,7 +14,7 @@ import com.google.android.material.tabs.TabLayout;
 
 import java.util.ArrayList;
 
-public class StilMain extends AppCompatActivity {
+public class Stil extends AppCompatActivity {
     private Context mContext;
     private TabLayout tabs;
     ViewPager viewPager;

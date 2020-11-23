@@ -11,7 +11,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-public class MainActivity extends AppCompatActivity {
+public class Login extends AppCompatActivity {
     Button login;
     EditText emailEt, passwordEt;
     String resultString;
@@ -20,6 +20,12 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        /**
+         * 메인 컨텐츠 개발을 위해 바로 넘어가도록 제작
+         */
+        Intent intent = new Intent(getApplicationContext(), Stil.class);
+        startActivity(intent);
 
         emailEt = (EditText) findViewById(R.id.email);
         passwordEt = (EditText) findViewById(R.id.password);
@@ -38,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
 //                NetworkTask networkTask = new NetworkTask("https://api.epiclogue.tk", values);
 //                networkTask.execute();
 
-                Intent intent = new Intent(getApplicationContext(), StilMain.class);
+                Intent intent = new Intent(getApplicationContext(), Stil.class);
                 startActivity(intent);
             }
         });
@@ -66,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
             //doInBackground()로 부터 리턴된 값이 onPostExecute()의 매개변수로 넘어오므로 s를 출력한다.
-            Toast.makeText(MainActivity.this, String.valueOf(s), Toast.LENGTH_SHORT).show();
+            Toast.makeText(Login.this, String.valueOf(s), Toast.LENGTH_SHORT).show();
         }
     }
 }
