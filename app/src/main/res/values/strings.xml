@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">STIL</string>
+    <string name="login_address">https://api.epiclogue.tk/</string>
+</resources>
