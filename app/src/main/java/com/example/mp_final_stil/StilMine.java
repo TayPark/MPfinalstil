@@ -59,6 +59,6 @@ public class StilMine extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_stil_mine, container, false);
+        return inflater.inflate(R.layout.mine_tab, container, false);
     }
 }
