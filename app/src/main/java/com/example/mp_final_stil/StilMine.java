@@ -3,6 +3,7 @@ package com.example.mp_final_stil;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.ListFragment;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,8 +18,10 @@ import java.util.ArrayList;
  * Use the {@link StilMine#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class StilMine extends Fragment {
-    ArrayList<String> items = new ArrayList<>();
+public class StilMine extends ListFragment {
+    private ArrayList<String> items = new ArrayList<>();
+
+    ListViewAdapter adapter;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -56,8 +59,23 @@ public class StilMine extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+        adapter = new ListViewAdapter();
+        setListAdapter(adapter);
 
-        return inflater.inflate(R.layout.mine_tab, container, false);
+        adapter.addItem("Title", "Summary1", "contents");
+        adapter.addItem("Title2", "Summary1", "contents");
+        adapter.addItem("Title3", "Summary5", "contents");
+        adapter.addItem("Title4", "Summary4", "contents");
+        adapter.addItem("Title", "Summary1", "contents");
+        adapter.addItem("Title", "Summary1", "contents");
+        adapter.addItem("Title", "Summary1", "contents");
+        adapter.addItem("Title", "Summary1", "contents");
+        adapter.addItem("Title", "Summary1", "contents");
+        adapter.addItem("Title", "Summary1", "contents");
+        adapter.addItem("Title", "Summary1", "contents");
+
+
+        return super.onCreateView(inflater, container, savedInstanceState);
+//        return inflater.inflate(R.layout.mine_tab, container, false);
     }
 }

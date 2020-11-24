@@ -46,10 +46,6 @@ public class Stil extends AppCompatActivity {
          * 2. Expandable Scroll View 에 넣고 onClickListener
          */
 
-//        for(int j = 0; j < 10; j++) {
-//            shareList.addView(findViewById(R.id.small_card));
-//        }
-
         // images in tabs
         ArrayList<Integer> frag = new ArrayList<>();
         frag.add(R.drawable.my_on);
@@ -59,12 +55,5 @@ public class Stil extends AppCompatActivity {
         for (int i = 0; i < NUMBER_OF_TABS; i++) {
             tabs.getTabAt(i).setIcon(frag.get(i));
         }
-
-        tabs.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(Stil.this, Integer.toString(tabs.getSelectedTabPosition()), Toast.LENGTH_SHORT).show();
-            }
-        });
     }
 }
