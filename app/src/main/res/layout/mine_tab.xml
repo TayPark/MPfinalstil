@@ -11,12 +11,4 @@
         android:id="@+id/listView"
         android:choiceMode="multipleChoice"/>
 
-    <com.example.mp_final_stil.CheckableLinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
-
-        <!-- 위젯 배치 -->
-
-    </com.example.mp_final_stil.CheckableLinearLayout>
 </FrameLayout>

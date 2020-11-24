@@ -1,6 +1,8 @@
 package com.example.mp_final_stil;
 
-public class ListViewItem {
+import android.view.View;
+
+public class ListViewItem  {
     private String _title;
     private String _summary;
     private String _content;
