@@ -6,6 +6,8 @@ public class ListViewItem  {
     private String _title;
     private String _summary;
     private String _content;
+    private String _author;
+    private boolean _openness;
 
     public ListViewItem(String title, String summary, String content) {
         this._title = title;
@@ -30,6 +32,18 @@ public class ListViewItem  {
         this._content = content;
     }
 
+    public void setAuthor(String author) {
+        this._author = author;
+    }
+
+    public void setOpen() {
+        this._openness = true;
+    }
+
+    public void setClose() {
+        this._openness = false;
+    }
+
     public String getTitle() {
         return this._title;
     }
@@ -41,4 +55,10 @@ public class ListViewItem  {
     public String getContent() {
         return this._content;
     }
+
+    public Boolean getOpenness() {
+        return this._openness;
+    }
+
+
 }
