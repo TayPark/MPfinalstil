@@ -64,12 +64,11 @@ public class ListViewAdapter extends BaseAdapter {
 
         ListViewItem listViewItem = listViewItemList.get(position);
 
-
         titleTextView.setText(listViewItem.getTitle());
         summaryTextView.setText(listViewItem.getSummary());
         contentTextView.setText(listViewItem.getContent());
 
-        Log.d("Debug", String.valueOf(position));
+//        Log.d("Debug", String.valueOf(position));
 
         return convertView;
     }

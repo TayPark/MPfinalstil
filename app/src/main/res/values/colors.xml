@@ -10,7 +10,6 @@
     <color name="cyan">#3497db</color>
     <color name="skyblue">#21b2de</color>
     <color name="limit">#00000008</color>
-    <color name="yellow">#FFEB3B</color>
+    <color name="yellow">#fdfd96 </color>
     <color name="carrot">#e65a1e</color>
-
 </resources>

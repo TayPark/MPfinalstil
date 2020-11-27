@@ -40,9 +40,7 @@ public class ListViewItem  {
         this._openness = true;
     }
 
-    public void setClose() {
-        this._openness = false;
-    }
+    public void setClose() { this._openness = false; }
 
     public String getTitle() {
         return this._title;
@@ -56,9 +54,5 @@ public class ListViewItem  {
         return this._content;
     }
 
-    public Boolean getOpenness() {
-        return this._openness;
-    }
-
-
+    public Boolean getOpenness() { return this._openness; }
 }

@@ -22,7 +22,7 @@ import java.util.ArrayList;
 
 public class StilMine extends ListFragment {
     private ArrayList<String> items = new ArrayList<>();
-
+    Button bookmarkBtn, deleteBtn, closeBtn;
     ListViewAdapter adapter;
 
     public StilMine() {
@@ -49,7 +49,7 @@ public class StilMine extends ListFragment {
          * 서버로부터 데이터를 받아와서 처리 코드 필요
          */
 
-        adapter.addItem("Titleasdf3", "Summary1", "contents");
+        adapter.addItem("1245", "Summary1", "contents");
         adapter.addItem("Title2", "Summary1", "contents");
         adapter.addItem("Title3", "Summary5", "contents");
         adapter.addItem("123", "Summary4", "contents");
@@ -61,15 +61,14 @@ public class StilMine extends ListFragment {
         adapter.addItem("12", "Summary1", "contents");
         adapter.addItem("61347", "Summary1", "contents");
 
-
         return super.onCreateView(inflater, container, savedInstanceState);
-//        return inflater.inflate(R.layout.mine_tab, container, false);
     }
 
     @Override
     public void onListItemClick(@NonNull ListView l, @NonNull View v, int position, long id) {
         ListViewItem item = (ListViewItem) l.getItemAtPosition(position);
         boolean isOpened = item.getOpenness();
+        Log.d("DEBUG", String.valueOf(isOpened));
 
         TextView titleTextView = v.findViewById(R.id.titleTextView);
         TextView summaryTextView = v.findViewById(R.id.summaryTextView);
@@ -93,19 +92,20 @@ public class StilMine extends ListFragment {
         } else {
             item.setOpen();
 
-//            titleTextView.setVisibility(View.GONE);
             summaryTextView.setVisibility(View.GONE);
-
             contentTextView.setVisibility(View.VISIBLE);
+
             bookmarkBtn.setVisibility(View.VISIBLE);
             closeBtn.setVisibility(View.VISIBLE);
-
-
-            deleteBtn.setBackgroundColor(Color.RED);
             deleteBtn.setVisibility(View.VISIBLE);
+
+            bookmarkBtn.setBackgroundColor(Color.parseColor("#ffb347"));
+            deleteBtn.setBackgroundColor(Color.parseColor("#e65a1e"));
+            closeBtn.setBackgroundColor(Color.parseColor("#21b2de"));
         }
 
-        adapter.notifyDataSetChanged();;
+        adapter.notifyDataSetChanged();
+//        Toast.makeText(getContext(), String.valueOf(position) + "를 눌렀단다", Toast.LENGTH_SHORT).show();
     }
 
     public void addItem(String title, String summary, String content) {
