@@ -32,4 +32,5 @@ class ViewpagerAdapter extends FragmentPagerAdapter {
         return fragList.size();
     }
 
+
 }

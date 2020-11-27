@@ -33,17 +33,9 @@ public class Login extends AppCompatActivity {
         login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                /** /
+                /**
                  * 유저 검증 필요
                  */
-
-
-//                ContentValues values = new ContentValues();
-//                values = null;
-//
-//                NetworkTask networkTask = new NetworkTask("https://api.epiclogue.tk", values);
-//                networkTask.execute();
-
                 Intent intent = new Intent(getApplicationContext(), Stil.class);
                 startActivity(intent);
             }
@@ -63,9 +55,9 @@ public class Login extends AppCompatActivity {
         protected String doInBackground(Void... params) {
             String result; // 요청 결과를 저장할 변수.
             RequestHttpURLConnection requestHttpURLConnection = new RequestHttpURLConnection();
-            result = requestHttpURLConnection.request(url, values); // 해당 URL로 부터 결과물을 얻어온다.
+//            result = requestHttpURLConnection.request(url, values); // 해당 URL로 부터 결과물을 얻어온다.
 
-            return result;
+            return null;
         }
 
         @Override

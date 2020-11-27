@@ -16,6 +16,13 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -60,6 +67,25 @@ public class StilMine extends ListFragment {
         adapter.addItem("Title", "Summary1", "contents");
         adapter.addItem("12", "Summary1", "contents");
         adapter.addItem("61347", "Summary1", "contents");
+
+        /**
+         * HTTP request and response with Volley
+         */
+        RequestQueue queue = Volley.newRequestQueue(getContext());
+        String url = "http://15.164.96.105:8080/";
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                Toast.makeText(getContext(), response, Toast.LENGTH_SHORT).show();
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(getContext(), String.valueOf(error), Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        queue.add(stringRequest);
 
         return super.onCreateView(inflater, container, savedInstanceState);
     }

@@ -22,10 +22,19 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager.widget.ViewPager;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.google.android.material.tabs.TabLayout;
 
 import org.json.JSONObject;
 
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.nio.channels.AlreadyBoundException;
 import java.util.ArrayList;
 import java.util.Map;
@@ -50,21 +59,33 @@ public class Stil extends AppCompatActivity {
         shareList = findViewById(R.id.stilList);
         bookmarkList = findViewById(R.id.bookmarkList);
 
-        /**
-         * TODO: 뷰를 어떻게 넣을 것인지 결정
-         * 1. Scroll View 에 LinearLayout 넣고 View.onClickListener 로 확장
-         * 2. Expandable Scroll View 에 넣고 onClickListener
-         */
-
         // images in tabs
         ArrayList<Integer> frag = new ArrayList<>();
         frag.add(R.drawable.my_on);
         frag.add(R.drawable.stil_on);
         frag.add(R.drawable.bookmark_on);
-
         for (int i = 0; i < NUMBER_OF_TABS; i++) {
             tabs.getTabAt(i).setIcon(frag.get(i));
         }
+
+        /**
+         * HTTP request and response with Volley
+         */
+        RequestQueue queue = Volley.newRequestQueue(this);
+        String url = "http://15.164.96.105:8080/";
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                Toast.makeText(Stil.this, response, Toast.LENGTH_SHORT).show();
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(Stil.this, String.valueOf(error), Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        queue.add(stringRequest);
     }
 
     @Override
