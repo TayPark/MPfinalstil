@@ -22,6 +22,7 @@
         </activity>
 
         <activity android:name=".Stil"></activity>
+        <activity android:name=".Join"></activity>
 
     </application>
 

@@ -26,28 +26,20 @@ import org.json.JSONObject;
 import java.util.Map;
 
 public class Login extends AppCompatActivity {
-    Button login;
+    Button loginBtn, joinBtn;
     EditText emailEt, passwordEt;
-    String resultString;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login);
 
-        Toast.makeText(this, "Login here", Toast.LENGTH_SHORT).show();
-
-        /**
-         * 메인 컨텐츠 개발을 위해 바로 넘어가도록 제작
-         */
-//        Intent intent = new Intent(getApplicationContext(), Stil.class);
-//        startActivity(intent);
-
         emailEt = (EditText) findViewById(R.id.email);
         passwordEt = (EditText) findViewById(R.id.password);
-        login = (Button) findViewById(R.id.loginBtn);
+        loginBtn = (Button) findViewById(R.id.loginBtn);
+        joinBtn = (Button) findViewById(R.id.joinBtn);
 
-        login.setOnClickListener(new View.OnClickListener() {
+        loginBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 JSONObject userData = new JSONObject();
@@ -93,6 +85,14 @@ public class Login extends AppCompatActivity {
                 });
 
                 queue.add(loginRequest);
+            }
+        });
+
+        joinBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), Join.class);
+                startActivity(intent);
             }
         });
     }
