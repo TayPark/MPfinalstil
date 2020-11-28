@@ -26,6 +26,7 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.android.material.tabs.TabLayout;
@@ -69,14 +70,14 @@ public class Stil extends AppCompatActivity {
         }
 
         /**
-         * HTTP request and response with Volley
+         * GET My TIL
          */
         RequestQueue queue = Volley.newRequestQueue(this);
-        String url = "http://15.164.96.105:8080/";
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
+        String url = "http://15.164.96.105:8080/stil?type=my";
+        JsonObjectRequest stringRequest = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
             @Override
-            public void onResponse(String response) {
-                Toast.makeText(Stil.this, response, Toast.LENGTH_SHORT).show();
+            public void onResponse(JSONObject response) {
+                Toast.makeText(Stil.this, response.toString(), Toast.LENGTH_SHORT).show();
             }
         }, new Response.ErrorListener() {
             @Override
@@ -114,10 +115,23 @@ public class Stil extends AppCompatActivity {
                 EditText title = dialogLayout.findViewById(R.id.userTitle);
                 EditText summary = dialogLayout.findViewById(R.id.userSummary);
 
-                /**
-                 * POST HTTP request and get response.
-                 * Then parse a response, make Toast message as response given.
-                 */
+                RequestQueue queue = Volley.newRequestQueue(Stil.this);
+                String url = "http://15.164.96.105:8080/stil";
+                StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        Log.d("DEBUG/Main-button", response);
+                        Toast.makeText(Stil.this, response, Toast.LENGTH_SHORT).show();
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.d("DEBUG/Main-button", error.toString());
+                        Toast.makeText(Stil.this, String.valueOf(error), Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+                queue.add(stringRequest);
 
 //                Toast.makeText(Stil.this, title.getText().toString(), Toast.LENGTH_SHORT).show();
             }

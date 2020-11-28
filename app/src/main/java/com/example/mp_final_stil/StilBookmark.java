@@ -1,64 +1,133 @@
 package com.example.mp_final_stil;
 
+import android.graphics.Color;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.ListFragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link StilBookmark#newInstance} factory method to
- * create an instance of this fragment.
- */
-public class StilBookmark extends Fragment {
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+import org.json.JSONArray;
+import org.json.JSONObject;
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+import java.util.ArrayList;
+
+public class StilBookmark extends ListFragment {
+    private ArrayList<String> items = new ArrayList<>();
+    ListViewAdapter adapter;
 
     public StilBookmark() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment StilBookmark.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static StilBookmark newInstance(String param1, String param2) {
+    public static StilBookmark newInstance() {
         StilBookmark fragment = new StilBookmark();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
         return fragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.bookmark_tab, container, false);
+        adapter = new ListViewAdapter();
+        setListAdapter(adapter);
+
+        /**
+         * HTTP request and response with Volley
+         */
+        RequestQueue queue = Volley.newRequestQueue(getContext());
+        String url = "http://15.164.96.105:8080/stil?type=bookmark";
+        JsonArrayRequest stringRequest = new JsonArrayRequest(Request.Method.GET, url, null, new Response.Listener<JSONArray>() {
+            @Override
+            public void onResponse(JSONArray response) {
+                Log.d("DEBUG/Bookmark", response.toString());
+                Toast.makeText(getContext(), response.toString(), Toast.LENGTH_SHORT).show();
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e("DEBUG/Bookmark", error.toString());
+                Toast.makeText(getContext(), String.valueOf(error), Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        queue.add(stringRequest);
+
+        return super.onCreateView(inflater, container, savedInstanceState);
     }
+
+    @Override
+    public void onListItemClick(@NonNull ListView l, @NonNull View v, int position, long id) {
+        ListViewItem item = (ListViewItem) l.getItemAtPosition(position);
+        boolean isOpened = item.getOpenness();
+        Log.d("DEBUG", String.valueOf(isOpened));
+
+        TextView titleTextView = v.findViewById(R.id.titleTextView);
+        TextView summaryTextView = v.findViewById(R.id.summaryTextView);
+        TextView contentTextView = v.findViewById(R.id.contentTextView);
+
+        Button bookmarkBtn = v.findViewById(R.id.bookmarkBtn);
+        Button closeBtn = v.findViewById(R.id.closeBtn);
+        Button deleteBtn = v.findViewById(R.id.deleteBtn);
+
+        if (isOpened) {
+            item.setClose();
+
+            titleTextView.setVisibility(View.VISIBLE);
+            summaryTextView.setVisibility(View.VISIBLE);
+
+            contentTextView.setVisibility(View.GONE);
+            bookmarkBtn.setVisibility(View.GONE);
+            closeBtn.setVisibility(View.GONE);
+            deleteBtn.setVisibility(View.GONE);
+
+        } else {
+            item.setOpen();
+
+            summaryTextView.setVisibility(View.GONE);
+            contentTextView.setVisibility(View.VISIBLE);
+
+            bookmarkBtn.setVisibility(View.VISIBLE);
+            closeBtn.setVisibility(View.VISIBLE);
+            deleteBtn.setVisibility(View.VISIBLE);
+
+            bookmarkBtn.setBackgroundColor(Color.parseColor("#ffb347"));
+            deleteBtn.setBackgroundColor(Color.parseColor("#e65a1e"));
+            closeBtn.setBackgroundColor(Color.parseColor("#21b2de"));
+        }
+
+        adapter.notifyDataSetChanged();
+//        Toast.makeText(getContext(), String.valueOf(position) + "를 눌렀단다", Toast.LENGTH_SHORT).show();
+    }
+
+    public void addItem(String title, String summary, String content) {
+        adapter.addItem(title, summary, content);
+    }
+
+    public void removeItem(int position) {
+
+    }
+
 }

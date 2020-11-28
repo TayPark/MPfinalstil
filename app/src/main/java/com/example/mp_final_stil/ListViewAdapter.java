@@ -43,8 +43,6 @@ public class ListViewAdapter extends BaseAdapter {
      * @param convertView - Direct view
      * @param parent - Parent view
      * @return View
-     *
-     * author: taypark@github.com
      */
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {

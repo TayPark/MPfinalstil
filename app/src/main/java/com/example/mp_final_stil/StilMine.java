@@ -20,23 +20,27 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.JsonRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 
 public class StilMine extends ListFragment {
     private ArrayList<String> items = new ArrayList<>();
-    Button bookmarkBtn, deleteBtn, closeBtn;
     ListViewAdapter adapter;
 
     public StilMine() {
         // Required empty public constructor
     }
 
-    public static StilMine newInstance(String param1, String param2) {
+    public static StilMine newInstance() {
         StilMine fragment = new StilMine();
         return fragment;
     }
@@ -53,34 +57,19 @@ public class StilMine extends ListFragment {
         setListAdapter(adapter);
 
         /**
-         * 서버로부터 데이터를 받아와서 처리 코드 필요
-         */
-
-        adapter.addItem("1245", "Summary1", "contents");
-        adapter.addItem("Title2", "Summary1", "contents");
-        adapter.addItem("Title3", "Summary5", "contents");
-        adapter.addItem("123", "Summary4", "contents");
-        adapter.addItem("Title", "Summary1", "contents");
-        adapter.addItem("1", "Summary1", "contents");
-        adapter.addItem(" ef2", "Summary1", "contents");
-        adapter.addItem("aw", "Summary1", "contents");
-        adapter.addItem("Title", "Summary1", "contents");
-        adapter.addItem("12", "Summary1", "contents");
-        adapter.addItem("61347", "Summary1", "contents");
-
-        /**
          * HTTP request and response with Volley
          */
         RequestQueue queue = Volley.newRequestQueue(getContext());
-        String url = "http://15.164.96.105:8080/";
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
+        String url = "http://15.164.96.105:8080/stil?type=my&email=" + "worker@naver.com";
+        JsonArrayRequest stringRequest = new JsonArrayRequest(Request.Method.GET, url, null, new Response.Listener<JSONArray>() {
             @Override
-            public void onResponse(String response) {
-                Toast.makeText(getContext(), response, Toast.LENGTH_SHORT).show();
+            public void onResponse(JSONArray response) {
+                Log.d("DEBUG/MyTIL", response.toString());
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                Log.e("DEBUG/MyTIL", error.toString());
                 Toast.makeText(getContext(), String.valueOf(error), Toast.LENGTH_SHORT).show();
             }
         });

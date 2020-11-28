@@ -6,10 +6,24 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.Map;
 
 public class Login extends AppCompatActivity {
     Button login;
@@ -21,50 +35,65 @@ public class Login extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login);
 
+        Toast.makeText(this, "Login here", Toast.LENGTH_SHORT).show();
+
         /**
          * 메인 컨텐츠 개발을 위해 바로 넘어가도록 제작
          */
-        Intent intent = new Intent(getApplicationContext(), Stil.class);
-        startActivity(intent);
+//        Intent intent = new Intent(getApplicationContext(), Stil.class);
+//        startActivity(intent);
 
         emailEt = (EditText) findViewById(R.id.email);
         passwordEt = (EditText) findViewById(R.id.password);
         login = (Button) findViewById(R.id.loginBtn);
+
         login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                /**
-                 * 유저 검증 필요
-                 */
-                Intent intent = new Intent(getApplicationContext(), Stil.class);
-                startActivity(intent);
+                JSONObject userData = new JSONObject();
+
+                try {
+                    userData.put("email", emailEt.getText().toString());
+                    userData.put("password", passwordEt.getText().toString());
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                RequestQueue queue = Volley.newRequestQueue(Login.this);
+                String url = "http://15.164.96.105:8080/user/login";
+                JsonObjectRequest loginRequest = new JsonObjectRequest(
+                        Request.Method.POST, url, userData
+                        , new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        Log.d("login-success", response.toString());
+                        try {
+                            if (response.get("ok").toString().equals("1")) {
+                                Toast.makeText(Login.this, "Login success", Toast.LENGTH_SHORT).show();
+                                Intent intent = new Intent(getApplicationContext(), Stil.class);
+                                startActivity(intent);
+                            } else {
+                                Toast.makeText(Login.this, "Login failed", Toast.LENGTH_SHORT).show();
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.e("login-error", error.toString());
+                        if (error.toString().equals("com.android.volley.ClientError")) {
+                            Toast.makeText(Login.this, "Check your ID and password", Toast.LENGTH_SHORT).show();
+                        }
+                        else {
+                            Toast.makeText(Login.this, String.valueOf(error), Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+
+                queue.add(loginRequest);
             }
         });
-    }
-
-    public class NetworkTask extends AsyncTask<Void, Void, String> {
-        private String url;
-        private ContentValues values;
-
-        public NetworkTask(String url, ContentValues values) {
-            this.url = url;
-            this.values = values;
-        }
-
-        @Override
-        protected String doInBackground(Void... params) {
-            String result; // 요청 결과를 저장할 변수.
-            RequestHttpURLConnection requestHttpURLConnection = new RequestHttpURLConnection();
-//            result = requestHttpURLConnection.request(url, values); // 해당 URL로 부터 결과물을 얻어온다.
-
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(String s) {
-            super.onPostExecute(s);
-            //doInBackground()로 부터 리턴된 값이 onPostExecute()의 매개변수로 넘어오므로 s를 출력한다.
-            Toast.makeText(Login.this, String.valueOf(s), Toast.LENGTH_SHORT).show();
-        }
     }
 }
