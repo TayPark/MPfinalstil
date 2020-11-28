@@ -74,7 +74,7 @@ public class Login extends AppCompatActivity {
                     Log.d("login-success", response.toString());
                     try {
                         if (response.get("ok").toString().equals("1")) {
-                            Toast.makeText(Login.this, "Login success", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(Login.this, "Logined with " + userData.getString("email"), Toast.LENGTH_SHORT).show();
                             Intent intent = new Intent(getApplicationContext(), Stil.class);
                             startActivity(intent);
                         } else {
@@ -122,7 +122,7 @@ public class Login extends AppCompatActivity {
                         Log.d("login-success", response.toString());
                         try {
                             if (response.get("ok").toString().equals("1")) {
-                                Toast.makeText(Login.this, "Login success", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(Login.this, "Logined with " + userData.getString("email"), Toast.LENGTH_SHORT).show();
                                 editor.putString("email", emailEt.getText().toString());
                                 editor.putString("password", passwordEt.getText().toString());
                                 editor.commit();
