@@ -9,6 +9,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -36,6 +37,7 @@ public class Main extends AppCompatActivity {
     private TabLayout tabs;
     private final int NUMBER_OF_TABS = 3;
     ViewPager viewPager;
+    LinearLayout myList;
     ListView shareList, bookmarkList;
     String url;
 
@@ -43,16 +45,20 @@ public class Main extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.stil_main);
+
         SharedPreferences userAccount = getSharedPreferences("autoLogin", Activity.MODE_PRIVATE);
 
         tabs = findViewById(R.id.tabs);
         viewPager = findViewById(R.id.view_pager);
+
+        // set adapter on viewpager
         ViewpagerAdapter adapter = new ViewpagerAdapter(getSupportFragmentManager());
         viewPager.setAdapter(adapter);
         tabs.setupWithViewPager(viewPager);
 
-        // lists setting
-        shareList = findViewById(R.id.stilList);
+        // lists by tab
+        myList = findViewById(R.id.myList);
+        shareList = findViewById(R.id.shareList);
         bookmarkList = findViewById(R.id.bookmarkList);
 
         // images in tabs
@@ -64,6 +70,9 @@ public class Main extends AppCompatActivity {
             tabs.getTabAt(i).setIcon(frag.get(i));
         }
 
+        /**
+         * Initial fetch from server (my tab)
+         */
         url = "http://15.164.96.105:8080/stil?type=my&email=" + userAccount.getString("email", null);
         RequestQueue queue = Volley.newRequestQueue(this);
 
@@ -84,7 +93,6 @@ public class Main extends AppCompatActivity {
                 Toast.makeText(Main.this, error.toString(), Toast.LENGTH_SHORT).show();
             }
         }));
-
 
         tabs.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(viewPager) {
             @Override
@@ -107,7 +115,7 @@ public class Main extends AppCompatActivity {
                     @Override
                     public void onResponse(JSONArray response) {
                         try {
-                            Log.e("Stil-tab-" + tabs.getSelectedTabPosition(), response.toString(2));
+                            Log.d("Stil-tab-" + tabs.getSelectedTabPosition(), response.toString(2));
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -116,7 +124,7 @@ public class Main extends AppCompatActivity {
                 }, new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-
+                        Log.d("Stil-tab-" + tabs.getSelectedTabPosition(), error.toString());
                     }
                 });
                 queue.add(request);

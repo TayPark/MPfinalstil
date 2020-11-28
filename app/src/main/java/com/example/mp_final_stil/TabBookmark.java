@@ -19,7 +19,8 @@ import java.util.ArrayList;
 public class TabBookmark extends ListFragment {
     private ArrayList<String> items = new ArrayList<>();
     ListViewAdapter adapter;
-
+    Button bookmarkBtn, closeBtn, deleteBtn;
+    TextView titleTextView, summaryTextView, contentTextView;
     public TabBookmark() {
         // Required empty public constructor
     }
@@ -40,6 +41,12 @@ public class TabBookmark extends ListFragment {
         adapter = new ListViewAdapter();
         setListAdapter(adapter);
 
+        /**
+         * 서버에서 데이터를 받아와서 처리해야 함
+         */
+        adapter.addItem("1245", "Summary1", "contents");
+        adapter.addItem("Title2", "Summary1", "contents");
+
         return super.onCreateView(inflater, container, savedInstanceState);
     }
 
@@ -49,50 +56,82 @@ public class TabBookmark extends ListFragment {
         boolean isOpened = item.getOpenness();
         Log.d("DEBUG", String.valueOf(isOpened));
 
-        TextView titleTextView = v.findViewById(R.id.titleTextView);
-        TextView summaryTextView = v.findViewById(R.id.summaryTextView);
-        TextView contentTextView = v.findViewById(R.id.contentTextView);
+        /**
+         * View/Button getters
+         */
+        titleTextView = v.findViewById(R.id.titleTextView);
+        summaryTextView = v.findViewById(R.id.summaryTextView);
+        contentTextView = v.findViewById(R.id.contentTextView);
 
-        Button bookmarkBtn = v.findViewById(R.id.bookmarkBtn);
-        Button closeBtn = v.findViewById(R.id.closeBtn);
-        Button deleteBtn = v.findViewById(R.id.deleteBtn);
+        bookmarkBtn = v.findViewById(R.id.bookmarkBtn);
+        closeBtn = v.findViewById(R.id.closeBtn);
+        deleteBtn = v.findViewById(R.id.deleteBtn);
 
-        if (isOpened) {
-            item.setClose();
+        /**
+         * Open content
+         */
+        summaryTextView.setVisibility(View.GONE);
+        contentTextView.setVisibility(View.VISIBLE);
 
-            titleTextView.setVisibility(View.VISIBLE);
-            summaryTextView.setVisibility(View.VISIBLE);
+        closeBtn.setVisibility(View.VISIBLE);
+        deleteBtn.setVisibility(View.VISIBLE);
 
-            contentTextView.setVisibility(View.GONE);
-            bookmarkBtn.setVisibility(View.GONE);
-            closeBtn.setVisibility(View.GONE);
-            deleteBtn.setVisibility(View.GONE);
+        deleteBtn.setBackgroundColor(Color.parseColor("#e65a1e"));
+        closeBtn.setBackgroundColor(Color.parseColor("#21b2de"));
 
-        } else {
-            item.setOpen();
+        /**
+         * Button click listeners
+         */
+        closeBtn.setOnClickListener(contentCloser());
+        deleteBtn.setOnClickListener(deleteBookmark());
 
-            summaryTextView.setVisibility(View.GONE);
-            contentTextView.setVisibility(View.VISIBLE);
+        closeBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
 
-            bookmarkBtn.setVisibility(View.VISIBLE);
-            closeBtn.setVisibility(View.VISIBLE);
-            deleteBtn.setVisibility(View.VISIBLE);
+                titleTextView.setVisibility(View.VISIBLE);
+                summaryTextView.setVisibility(View.VISIBLE);
 
-            bookmarkBtn.setBackgroundColor(Color.parseColor("#ffb347"));
-            deleteBtn.setBackgroundColor(Color.parseColor("#e65a1e"));
-            closeBtn.setBackgroundColor(Color.parseColor("#21b2de"));
-        }
+                contentTextView.setVisibility(View.GONE);
+                bookmarkBtn.setVisibility(View.GONE);
+                closeBtn.setVisibility(View.GONE);
+                deleteBtn.setVisibility(View.GONE);
+            }
+        });
 
         adapter.notifyDataSetChanged();
+
+
 //        Toast.makeText(getContext(), String.valueOf(position) + "를 눌렀단다", Toast.LENGTH_SHORT).show();
     }
 
-    public void addItem(String title, String summary, String content) {
-        adapter.addItem(title, summary, content);
+    private View.OnClickListener contentCloser () {
+        return new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                titleTextView.setVisibility(View.VISIBLE);
+                summaryTextView.setVisibility(View.VISIBLE);
+
+                contentTextView.setVisibility(View.GONE);
+                bookmarkBtn.setVisibility(View.GONE);
+                closeBtn.setVisibility(View.GONE);
+                deleteBtn.setVisibility(View.GONE);
+            }
+        };
     }
 
-    public void removeItem(int position) {
-
+    /**
+     * Delete content if it is user's
+     * @return
+     */
+    private View.OnClickListener deleteBookmark() {
+        return new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                /**
+                 * 통신 코드 필요
+                 */
+            }
+        };
     }
-
 }
