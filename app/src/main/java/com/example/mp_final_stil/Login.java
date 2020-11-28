@@ -3,10 +3,8 @@ package com.example.mp_final_stil;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Activity;
-import android.content.ContentValues;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -19,13 +17,10 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.util.Map;
 
 public class Login extends AppCompatActivity {
     Button loginBtn, joinBtn;
@@ -75,7 +70,7 @@ public class Login extends AppCompatActivity {
                     try {
                         if (response.get("ok").toString().equals("1")) {
                             Toast.makeText(Login.this, "Logined with " + userData.getString("email"), Toast.LENGTH_SHORT).show();
-                            Intent intent = new Intent(getApplicationContext(), Stil.class);
+                            Intent intent = new Intent(getApplicationContext(), Main.class);
                             startActivity(intent);
                         } else {
                             Toast.makeText(Login.this, "Login failed", Toast.LENGTH_SHORT).show();
@@ -126,7 +121,7 @@ public class Login extends AppCompatActivity {
                                 editor.putString("email", emailEt.getText().toString());
                                 editor.putString("password", passwordEt.getText().toString());
                                 editor.commit();
-                                Intent intent = new Intent(getApplicationContext(), Stil.class);
+                                Intent intent = new Intent(getApplicationContext(), Main.class);
                                 startActivity(intent);
                             } else {
                                 Toast.makeText(Login.this, "Login failed", Toast.LENGTH_SHORT).show();

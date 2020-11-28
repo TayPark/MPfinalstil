@@ -1,7 +1,6 @@
 package com.example.mp_final_stil;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
@@ -14,9 +13,9 @@ class ViewpagerAdapter extends FragmentPagerAdapter {
     public ViewpagerAdapter(@NonNull FragmentManager fm)
     {
         super(fm);
-        fragList.add(new StilMine());
-        fragList.add(new StilShare());
-        fragList.add(new StilBookmark());
+        fragList.add(new TabMy());
+        fragList.add(new TabShare());
+        fragList.add(new TabBookmark());
     }
 
     @NonNull

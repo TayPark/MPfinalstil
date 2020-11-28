@@ -4,7 +4,6 @@ import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
 import androidx.fragment.app.ListFragment;
 
 import android.util.Log;
@@ -14,34 +13,19 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonArrayRequest;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.JsonRequest;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-public class StilMine extends ListFragment {
+public class TabShare extends ListFragment {
     private ArrayList<String> items = new ArrayList<>();
     ListViewAdapter adapter;
 
-    public StilMine() {
+    public TabShare() {
         // Required empty public constructor
     }
 
-    public static StilMine newInstance() {
-        StilMine fragment = new StilMine();
+    public static TabMy newInstance() {
+        TabMy fragment = new TabMy();
         return fragment;
     }
 
@@ -57,24 +41,20 @@ public class StilMine extends ListFragment {
         setListAdapter(adapter);
 
         /**
-         * HTTP request and response with Volley
+         * 서버로부터 데이터를 받아와서 처리 코드 필요
          */
-        RequestQueue queue = Volley.newRequestQueue(getContext());
-        String url = "http://15.164.96.105:8080/stil?type=my&email=" + "worker@naver.com";
-        JsonArrayRequest stringRequest = new JsonArrayRequest(Request.Method.GET, url, null, new Response.Listener<JSONArray>() {
-            @Override
-            public void onResponse(JSONArray response) {
-                Log.d("DEBUG/MyTIL", response.toString());
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.e("DEBUG/MyTIL", error.toString());
-                Toast.makeText(getContext(), String.valueOf(error), Toast.LENGTH_SHORT).show();
-            }
-        });
 
-        queue.add(stringRequest);
+        adapter.addItem("1245", "Summary1", "contents");
+        adapter.addItem("Title2", "Summary1", "contents");
+        adapter.addItem("Title3", "Summary5", "contents");
+        adapter.addItem("123", "Summary4", "contents");
+        adapter.addItem("Title", "Summary1", "contents");
+        adapter.addItem("1", "Summary1", "contents");
+        adapter.addItem(" ef2", "Summary1", "contents");
+        adapter.addItem("aw", "Summary1", "contents");
+        adapter.addItem("Title", "Summary1", "contents");
+        adapter.addItem("12", "Summary1", "contents");
+        adapter.addItem("61347", "Summary1", "contents");
 
         return super.onCreateView(inflater, container, savedInstanceState);
     }

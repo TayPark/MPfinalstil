@@ -16,12 +16,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/userTitle"
+        android:layout_marginBottom="30dp"
         android:hint="Title here"/>
     
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/userSummary"
+        android:layout_marginBottom="30dp"
         android:hint="Summary here" />
 
 </LinearLayout>
