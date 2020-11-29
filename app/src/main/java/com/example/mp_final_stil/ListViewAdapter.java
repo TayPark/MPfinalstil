@@ -46,9 +46,7 @@ public class ListViewAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         Context context = parent.getContext();
 
-        /**
-         * 뷰를 inflate 하기 위해 서비스와 인플레이터를 호출 함
-         */
+        /* 뷰를 inflate 하기 위해 서비스와 인플레이터를 호출 함  */
         if(convertView == null) {
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             convertView = inflater.inflate(R.layout.listview_item, parent, false);
@@ -63,8 +61,6 @@ public class ListViewAdapter extends BaseAdapter {
         titleTextView.setText(listViewItem.getTitle());
         summaryTextView.setText(listViewItem.getSummary());
         contentTextView.setText(listViewItem.getContent());
-
-//        Log.d("Debug", String.valueOf(position));
 
         return convertView;
     }

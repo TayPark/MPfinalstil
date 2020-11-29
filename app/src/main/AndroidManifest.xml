@@ -21,8 +21,8 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".Main"></activity>
         <activity android:name=".Join"></activity>
+        <activity android:name=".Main"></activity>
 
     </application>
 

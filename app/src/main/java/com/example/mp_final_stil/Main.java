@@ -40,13 +40,14 @@ public class Main extends AppCompatActivity {
     LinearLayout myList;
     ListView shareList, bookmarkList;
     String url;
+    SharedPreferences userAccount;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.stil_main);
 
-        SharedPreferences userAccount = getSharedPreferences("autoLogin", Activity.MODE_PRIVATE);
+        userAccount = getSharedPreferences("autoLogin", Activity.MODE_PRIVATE);
 
         tabs = findViewById(R.id.tabs);
         viewPager = findViewById(R.id.view_pager);
@@ -136,9 +137,23 @@ public class Main extends AppCompatActivity {
             EditText title = dialogLayout.findViewById(R.id.userTitle);
             EditText summary = dialogLayout.findViewById(R.id.userSummary);
 
+            JSONObject requestBody = new JSONObject();
+            try {
+                requestBody.put("title", title.getText().toString());
+                requestBody.put("summary", summary.getText().toString());
+                JSONArray contentArray = new JSONArray();
+                contentArray.put("hello1");
+                contentArray.put("hello2");
+                requestBody.put("content", contentArray);
+
+                requestBody.put("author", userAccount.getString("email", null));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
             RequestQueue queue = Volley.newRequestQueue(Main.this);
             String url = "http://15.164.96.105:8080/stil";
-            JsonObjectRequest deployRequest = new JsonObjectRequest(Request.Method.POST, url, null, new Response.Listener<JSONObject>() {
+            JsonObjectRequest deployRequest = new JsonObjectRequest(Request.Method.POST, url, requestBody, new Response.Listener<JSONObject>() {
                 @Override
                 public void onResponse(JSONObject response) {
                     Log.d("DEBUG/Main-button", response.toString());

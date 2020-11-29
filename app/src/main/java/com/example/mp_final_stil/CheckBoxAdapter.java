@@ -5,7 +5,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.CheckBox;
 
+import java.sql.ClientInfoStatus;
 import java.util.ArrayList;
 
 
@@ -56,8 +58,13 @@ public class CheckBoxAdapter extends BaseAdapter {
         /* 뷰를 inflate 하기 위해 서비스와 인플레이터를 호출 함 */
         if(convertView == null) {
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            convertView = inflater.inflate(R.layout.listview_item, parent, false);
+            convertView = inflater.inflate(R.layout.checkbox_item, parent, false);
         }
+
+        /* Get data and set */
+        CheckBox checkBox = convertView.findViewById(R.id.checkBox);
+        CheckBoxItem checkBoxItem = checkBoxItems.get(position);
+        checkBox.setText(checkBoxItem.getContent());
 
         return convertView;
     }

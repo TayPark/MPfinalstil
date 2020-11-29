@@ -111,14 +111,17 @@ public class Login extends AppCompatActivity {
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
-                    }, error -> {
-                        Log.e("login-error", error.toString());
-                        if (error.toString().equals("com.android.volley.ClientError")) {
-                            Toast.makeText(Login.this, "Check your ID and password", Toast.LENGTH_SHORT).show();
-                        } else {
-                            Toast.makeText(Login.this, String.valueOf(error), Toast.LENGTH_SHORT).show();
-                        }
-                    });
+                    }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Log.e("login-error", error.toString());
+                    if (error.toString().equals("com.android.volley.ClientError")) {
+                        Toast.makeText(Login.this, "Check your ID and password", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(Login.this, String.valueOf(error), Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
 
             queue.add(loginRequest);
         });

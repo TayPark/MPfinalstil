@@ -58,6 +58,9 @@ public class TabMy extends ListFragment {
         setListAdapter(adapter);
 
         adapter.addItem("Hello");
+        adapter.addItem("Hello1");
+        adapter.addItem("Hello2");
+        adapter.addItem("Hello3");
 
 
         return super.onCreateView(inflater, container, savedInstanceState);
