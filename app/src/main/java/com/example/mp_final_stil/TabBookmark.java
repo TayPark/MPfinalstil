@@ -1,5 +1,6 @@
 package com.example.mp_final_stil;
 
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 
@@ -14,15 +15,41 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 
 public class TabBookmark extends ListFragment {
-    private ArrayList<String> items = new ArrayList<>();
+    private ArrayList<JSONObject> items = new ArrayList<>();
     ListViewAdapter adapter;
     Button bookmarkBtn, closeBtn, deleteBtn;
     TextView titleTextView, summaryTextView, contentTextView;
+
     public TabBookmark() {
         // Required empty public constructor
+    }
+
+    /**
+     * Constructor
+     * @param items - Bookmark data
+     * @throws JSONException
+     */
+    public TabBookmark(ArrayList<JSONObject> items) {
+        try {
+            for (JSONObject each : items) {
+                String title = each.getString("title");
+                String summary = each.getString("title");
+                String content = each.getString("content");
+                String _id = each.getString("_id");
+
+                adapter.addItem(title, summary, content, _id);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
     }
 
     public static TabBookmark newInstance() {
@@ -44,18 +71,15 @@ public class TabBookmark extends ListFragment {
         /**
          * 서버에서 데이터를 받아와서 처리해야 함
          */
-        adapter.addItem("1245", "Summary1", "contents");
-        adapter.addItem("Title2", "Summary1", "contents");
+
+        adapter.addItem("1245", "Summary1", "contents", "231rf34g3");
+        adapter.addItem("Title2", "Summary1", "contents", "ywg45gfw4b");
 
         return super.onCreateView(inflater, container, savedInstanceState);
     }
 
     @Override
     public void onListItemClick(@NonNull ListView l, @NonNull View v, int position, long id) {
-        ListViewItem item = (ListViewItem) l.getItemAtPosition(position);
-        boolean isOpened = item.getOpenness();
-        Log.d("DEBUG", String.valueOf(isOpened));
-
         /**
          * View/Button getters
          */
@@ -100,9 +124,6 @@ public class TabBookmark extends ListFragment {
         });
 
         adapter.notifyDataSetChanged();
-
-
-//        Toast.makeText(getContext(), String.valueOf(position) + "를 눌렀단다", Toast.LENGTH_SHORT).show();
     }
 
     private View.OnClickListener contentCloser () {

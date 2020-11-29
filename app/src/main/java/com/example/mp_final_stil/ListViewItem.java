@@ -10,10 +10,11 @@ public class ListViewItem  {
     private String _author;
     private boolean _openness;
 
-    public ListViewItem(String title, String summary, String content) {
+    public ListViewItem(String title, String summary, String content, String id) {
         this._title = title;
         this._summary = summary;
         this._content = content;
+        this._id = id;
     }
 
     public String[] getItem() {

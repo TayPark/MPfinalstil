@@ -42,6 +42,26 @@ public class TabShare extends ListFragment {
         // Required empty public constructor
     }
 
+    /**
+     * Constructor
+     * @param items - Bookmark data
+     * @throws JSONException
+     */
+    public TabShare(ArrayList<JSONObject> items) {
+        try {
+            for (JSONObject each : items) {
+                String title = each.getString("title");
+                String summary = each.getString("title");
+                String content = each.getString("content");
+                String _id = each.getString("_id");
+
+                adapter.addItem(title, summary, content, _id);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
     public static TabMy newInstance() {
         TabMy fragment = new TabMy();
         return fragment;
@@ -62,17 +82,12 @@ public class TabShare extends ListFragment {
          * 서버로부터 데이터를 받아와서 처리 코드 필요
          */
 
-        adapter.addItem("1245", "Summary1", "contents");
-        adapter.addItem("Title2", "Summary1", "contents");
-        adapter.addItem("Title3", "Summary5", "contents");
-        adapter.addItem("123", "Summary4", "contents");
-        adapter.addItem("Title", "Summary1", "contents");
-        adapter.addItem("1", "Summary1", "contents");
-        adapter.addItem(" ef2", "Summary1", "contents");
-        adapter.addItem("aw", "Summary1", "contents");
-        adapter.addItem("Title", "Summary1", "contents");
-        adapter.addItem("12", "Summary1", "contents");
-        adapter.addItem("61347", "Summary1", "contents");
+        adapter.addItem("1245", "Summary1", "contents", "13464331f");
+        adapter.addItem("Title2", "Summary1", "contents", "13464331f");
+        adapter.addItem("Title3", "Summary5", "contents", "13464331f");
+        adapter.addItem("123", "Summary4", "contents", "13464331f");
+        adapter.addItem("Title", "Summary1", "contents", "13464331f");
+        adapter.addItem("1", "Summary1", "contents", "13464331f");
 
         return super.onCreateView(inflater, container, savedInstanceState);
     }
@@ -87,10 +102,6 @@ public class TabShare extends ListFragment {
      */
     @Override
     public void onListItemClick(@NonNull ListView l, @NonNull View v, int position, long id) {
-        ListViewItem item = (ListViewItem) l.getItemAtPosition(position);
-        boolean isOpened = item.getOpenness();
-        Log.d("DEBUG", String.valueOf(isOpened));
-
         /**
          * View/Button getters
          */
@@ -124,7 +135,6 @@ public class TabShare extends ListFragment {
         deleteBtn.setOnClickListener(deleteContent());
 
         adapter.notifyDataSetChanged();
-//        Toast.makeText(getContext(), String.valueOf(position) + "를 눌렀단다", Toast.LENGTH_SHORT).show();
     }
 
     /**

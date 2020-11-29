@@ -71,8 +71,8 @@ public class ListViewAdapter extends BaseAdapter {
         return convertView;
     }
 
-    public void addItem(String title, String summary, String content) {
-        ListViewItem item = new ListViewItem(title, summary, content);
+    public void addItem(String title, String summary, String content, String id) {
+        ListViewItem item = new ListViewItem(title, summary, content, id);
 
         listViewItemList.add(item);
     }

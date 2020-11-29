@@ -120,7 +120,7 @@ public class Login extends AppCompatActivity {
                                 Toast.makeText(Login.this, "Logined with " + userData.getString("email"), Toast.LENGTH_SHORT).show();
                                 editor.putString("email", emailEt.getText().toString());
                                 editor.putString("password", passwordEt.getText().toString());
-                                editor.commit();
+                                editor.apply();
                                 Intent intent = new Intent(getApplicationContext(), Main.class);
                                 startActivity(intent);
                             } else {

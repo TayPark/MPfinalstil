@@ -1,9 +1,12 @@
 package com.example.mp_final_stil;
 
+import android.view.ViewGroup;
+
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
+import androidx.viewpager2.adapter.FragmentStateAdapter;
 
 import java.util.ArrayList;
 
@@ -31,5 +34,13 @@ class ViewpagerAdapter extends FragmentPagerAdapter {
         return fragList.size();
     }
 
+    @Override
+    public void destroyItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
+        super.destroyItem(container, position, object);
+    }
 
+    public void replaceFragment(int position, Fragment frag) {
+        fragList.remove(position);
+        fragList.add(position, frag);
+    }
 }
