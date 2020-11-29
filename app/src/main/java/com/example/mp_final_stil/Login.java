@@ -32,16 +32,12 @@ public class Login extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login);
 
-        emailEt = (EditText) findViewById(R.id.email);
-        passwordEt = (EditText) findViewById(R.id.password);
-        loginBtn = (Button) findViewById(R.id.loginBtn);
-        joinBtn = (Button) findViewById(R.id.joinBtn);
+        emailEt = findViewById(R.id.email);
+        passwordEt = findViewById(R.id.password);
+        loginBtn = findViewById(R.id.loginBtn);
+        joinBtn = findViewById(R.id.joinBtn);
 
         SharedPreferences autoLogin = getSharedPreferences("autoLogin", Activity.MODE_PRIVATE);
-        /**
-         * editor.commit() : 확인
-         * editor.clear() : 비우기
-         */
         SharedPreferences.Editor editor = autoLogin.edit();
         autoEmail = autoLogin.getString("email", null);
         autoPassword = autoLogin.getString("password", null);
@@ -50,9 +46,7 @@ public class Login extends AppCompatActivity {
         RequestQueue queue = Volley.newRequestQueue(Login.this);
         String url = "http://15.164.96.105:8080/user/login";
 
-        /**
-         * Auto-login
-         */
+        /* Auto-login */
         if (autoEmail != null && autoPassword != null) {
             try {
                 userData.put("email", autoEmail);
@@ -63,57 +57,45 @@ public class Login extends AppCompatActivity {
 
             JsonObjectRequest autoLoginRequest = new JsonObjectRequest(
                     Request.Method.POST, url, userData
-                    , new Response.Listener<JSONObject>() {
-                @Override
-                public void onResponse(JSONObject response) {
-                    Log.d("login-success", response.toString());
-                    try {
-                        if (response.get("ok").toString().equals("1")) {
-                            Toast.makeText(Login.this, "Logined with " + userData.getString("email"), Toast.LENGTH_SHORT).show();
-                            Intent intent = new Intent(getApplicationContext(), Main.class);
-                            startActivity(intent);
-                        } else {
-                            Toast.makeText(Login.this, "Login failed", Toast.LENGTH_SHORT).show();
+                    , response -> {
+                        Log.d("login-success", response.toString());
+                        try {
+                            if (response.get("ok").toString().equals("1")) {
+                                Toast.makeText(Login.this, "Logined with " + userData.getString("email"), Toast.LENGTH_SHORT).show();
+                                Intent intent = new Intent(getApplicationContext(), Main.class);
+                                startActivity(intent);
+                            } else {
+                                Toast.makeText(Login.this, "Login failed", Toast.LENGTH_SHORT).show();
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
                         }
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    Log.e("auto-login-error", error.toString());
-                    Log.e("auto-login-error", "Requested params: " + autoEmail + " " + autoPassword);
-                    if (error.toString().equals("com.android.volley.ClientError")) {
-                        editor.clear();
-                        Toast.makeText(Login.this, "Auto login failed", Toast.LENGTH_SHORT).show();
-                    } else {
-                        Toast.makeText(Login.this, "Unexpected error: " + String.valueOf(error), Toast.LENGTH_SHORT).show();
-                    }
-                }
-            });
+                    }, error -> {
+                        Log.e("auto-login-error", error.toString());
+                        Log.e("auto-login-error", "Requested params: " + autoEmail + " " + autoPassword);
+                        if (error.toString().equals("com.android.volley.ClientError")) {
+                            editor.clear();
+                            Toast.makeText(Login.this, "Auto login failed", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(Login.this, "Unexpected error: " + String.valueOf(error), Toast.LENGTH_SHORT).show();
+                        }
+                    });
 
             queue.add(autoLoginRequest);
         }
 
-        /**
-         * Login process
-         */
-        loginBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                try {
-                    userData.put("email", emailEt.getText().toString());
-                    userData.put("password", passwordEt.getText().toString());
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+        /* Login process */
+        loginBtn.setOnClickListener(v -> {
+            try {
+                userData.put("email", emailEt.getText().toString());
+                userData.put("password", passwordEt.getText().toString());
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
 
-                JsonObjectRequest loginRequest = new JsonObjectRequest(
-                        Request.Method.POST, url, userData
-                        , new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
+            JsonObjectRequest loginRequest = new JsonObjectRequest(
+                    Request.Method.POST, url, userData
+                    , response -> {
                         Log.d("login-success", response.toString());
                         try {
                             if (response.get("ok").toString().equals("1")) {
@@ -129,33 +111,22 @@ public class Login extends AppCompatActivity {
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
-                    }
-                }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
+                    }, error -> {
                         Log.e("login-error", error.toString());
                         if (error.toString().equals("com.android.volley.ClientError")) {
                             Toast.makeText(Login.this, "Check your ID and password", Toast.LENGTH_SHORT).show();
                         } else {
                             Toast.makeText(Login.this, String.valueOf(error), Toast.LENGTH_SHORT).show();
                         }
-                    }
-                });
+                    });
 
-                queue.add(loginRequest);
-            }
+            queue.add(loginRequest);
         });
 
-        /**
-         * Join process
-         */
-        joinBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), Join.class);
-                startActivity(intent);
-                finish();
-            }
+        /* Join process */
+        joinBtn.setOnClickListener(v -> {
+            Intent intent = new Intent(getApplicationContext(), Join.class);
+            startActivity(intent);
         });
     }
 }

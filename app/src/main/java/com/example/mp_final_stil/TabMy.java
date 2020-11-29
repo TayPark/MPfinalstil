@@ -4,8 +4,10 @@ import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.ListFragment;
 
+import android.telephony.CellIdentity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,14 +25,14 @@ import java.util.ArrayList;
 
 public class TabMy extends ListFragment {
     private ArrayList<String> items = new ArrayList<>();
-    ListViewAdapter adapter;
-    LinearLayout myTabLayout;
+    CheckBoxAdapter adapter;
+//    LinearLayout myTabLayout;
 
     public TabMy() {
         // Required empty public constructor
     }
 
-    public TabMy(JSONArray items) throws JSONException {
+    public TabMy(JSONArray items) {
         try {
             ArrayList<String> contents = (ArrayList<String>) items.get(0);
             Log.d("Tab-my", contents.toString());
@@ -50,12 +52,12 @@ public class TabMy extends ListFragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        adapter = new ListViewAdapter();
+        adapter = new CheckBoxAdapter();
         setListAdapter(adapter);
 
-        inflater.inflate(R.layout.tab_my, container);
+        adapter.addItem("Hello");
 
 
         return super.onCreateView(inflater, container, savedInstanceState);

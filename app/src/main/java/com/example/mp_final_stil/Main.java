@@ -57,7 +57,7 @@ public class Main extends AppCompatActivity {
         tabs.setupWithViewPager(viewPager);
 
         // lists by tab
-        myList = findViewById(R.id.myList);
+        myList = findViewById(R.id.myTabLayout);
         shareList = findViewById(R.id.shareList);
         bookmarkList = findViewById(R.id.bookmarkList);
 
@@ -70,28 +70,20 @@ public class Main extends AppCompatActivity {
             tabs.getTabAt(i).setIcon(frag.get(i));
         }
 
-        /**
-         * Initial fetch from server (my tab)
-         */
+        /* Initial fetch from server (my tab) */
         url = "http://15.164.96.105:8080/stil?type=my&email=" + userAccount.getString("email", null);
         RequestQueue queue = Volley.newRequestQueue(this);
 
-        queue.add(new JsonArrayRequest(Request.Method.GET, url, null, new Response.Listener<JSONArray>() {
-            @Override
-            public void onResponse(JSONArray response) {
-                try {
-                    Log.d("Stil-my-init", response.toString(2));
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                Toast.makeText(Main.this, response.toString(), Toast.LENGTH_SHORT).show();
+        queue.add(new JsonArrayRequest(Request.Method.GET, url, null, response -> {
+            try {
+                Log.d("Stil-my-init", response.toString(2));
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.d("Stil-my-init", error.toString());
-                Toast.makeText(Main.this, error.toString(), Toast.LENGTH_SHORT).show();
-            }
+            Toast.makeText(Main.this, response.toString(), Toast.LENGTH_SHORT).show();
+        }, error -> {
+            Log.d("Stil-my-init", error.toString());
+            Toast.makeText(Main.this, error.toString(), Toast.LENGTH_SHORT).show();
         }));
 
         tabs.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(viewPager) {
@@ -111,22 +103,14 @@ public class Main extends AppCompatActivity {
                     Toast.makeText(Main.this, "Wrong access on tab: " + tabs.getSelectedTabPosition(), Toast.LENGTH_SHORT).show();
                 }
 
-                request = new JsonArrayRequest(Request.Method.GET, url, null, new Response.Listener<JSONArray>() {
-                    @Override
-                    public void onResponse(JSONArray response) {
-                        try {
-                            Log.d("Stil-tab-" + tabs.getSelectedTabPosition(), response.toString(2));
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                        Toast.makeText(Main.this, response.toString(), Toast.LENGTH_SHORT).show();
+                request = new JsonArrayRequest(Request.Method.GET, url, null, response -> {
+                    try {
+                        Log.d("Stil-tab-" + tabs.getSelectedTabPosition(), response.toString(2));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
-                }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Log.d("Stil-tab-" + tabs.getSelectedTabPosition(), error.toString());
-                    }
-                });
+                    Toast.makeText(Main.this, response.toString(), Toast.LENGTH_SHORT).show();
+                }, error -> Log.d("Stil-tab-" + tabs.getSelectedTabPosition(), error.toString()));
                 queue.add(request);
             }
         });
@@ -140,42 +124,35 @@ public class Main extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        /**
-         * Set dialog for deployment and inflate.
-         */
+        /* Set dialog for deployment and inflate. */
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Share TIL");
 
         final View dialogLayout = getLayoutInflater().inflate(R.layout.deploy_dialog, null);
         builder.setView(dialogLayout);
 
-        /**
-         * Set buttons and action here.
-         */
-        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                EditText title = dialogLayout.findViewById(R.id.userTitle);
-                EditText summary = dialogLayout.findViewById(R.id.userSummary);
+        /* Set buttons and action here. */
+        builder.setPositiveButton("OK", (dialog, which) -> {
+            EditText title = dialogLayout.findViewById(R.id.userTitle);
+            EditText summary = dialogLayout.findViewById(R.id.userSummary);
 
-                RequestQueue queue = Volley.newRequestQueue(Main.this);
-                String url = "http://15.164.96.105:8080/stil";
-                JsonObjectRequest deployRequest = new JsonObjectRequest(Request.Method.POST, url, null, new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        Log.d("DEBUG/Main-button", response.toString());
-                        Toast.makeText(Main.this, response.toString(), Toast.LENGTH_SHORT).show();
-                    }
-                }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Log.d("DEBUG/Main-button", error.toString());
-                        Toast.makeText(Main.this, String.valueOf(error), Toast.LENGTH_SHORT).show();
-                    }
-                });
+            RequestQueue queue = Volley.newRequestQueue(Main.this);
+            String url = "http://15.164.96.105:8080/stil";
+            JsonObjectRequest deployRequest = new JsonObjectRequest(Request.Method.POST, url, null, new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+                    Log.d("DEBUG/Main-button", response.toString());
+                    Toast.makeText(Main.this, response.toString(), Toast.LENGTH_SHORT).show();
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Log.d("DEBUG/Main-button", error.toString());
+                    Toast.makeText(Main.this, String.valueOf(error), Toast.LENGTH_SHORT).show();
+                }
+            });
 
-                queue.add(deployRequest);
-            }
+            queue.add(deployRequest);
         });
         builder.setNegativeButton("Cancel", null);
         builder.show();
