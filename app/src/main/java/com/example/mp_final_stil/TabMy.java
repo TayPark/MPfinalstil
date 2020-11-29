@@ -5,6 +5,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.ListFragment;
 
 import android.telephony.CellIdentity;
@@ -22,12 +23,13 @@ import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class TabMy extends ListFragment {
-    private ArrayList<String> items = new ArrayList<>();
+    private ArrayList<String> _items = new ArrayList<>();
     CheckBoxAdapter adapter;
     CheckBox checkBox;
 
@@ -37,15 +39,16 @@ public class TabMy extends ListFragment {
 
     public TabMy(JSONArray items) {
         try {
-            ArrayList<String> contents = (ArrayList<String>) items.get(0);
-            Log.d("Tab-my", contents.toString());
+            for (int i = 0; i < items.length(); i++) {
+                this._items.add(items.get(i).toString());
+            }
         } catch (JSONException e) {
             e.printStackTrace();
         }
     }
 
-    public static TabMy newInstance() {
-        TabMy fragment = new TabMy();
+    public static TabMy newInstance(JSONArray items) {
+        TabMy fragment = new TabMy(items);
         return fragment;
     }
 
@@ -60,11 +63,9 @@ public class TabMy extends ListFragment {
         adapter = new CheckBoxAdapter();
         setListAdapter(adapter);
 
-        adapter.addItem("Hello");
-        adapter.addItem("Hello1");
-        adapter.addItem("Hello2");
-        adapter.addItem("Hello3");
-
+        for (int i = 0; i < _items.size(); i++) {
+            adapter.addItem(_items.get(i));
+        }
 
         return super.onCreateView(inflater, container, savedInstanceState);
     }
@@ -74,10 +75,27 @@ public class TabMy extends ListFragment {
 
     }
 
+    public void getItems(JSONArray items) {
+        try {
+            for (int i = 0; i < items.length(); i++) {
+                this._items.add(items.get(i).toString());
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
 
+    public void addItems(JSONArray items) {
+        for (int i = 0; i < items.length(); i++) {
+            try {
+                adapter.addItem(items.getString(i));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 
     public void removeItem(int position) {
 
     }
-
 }

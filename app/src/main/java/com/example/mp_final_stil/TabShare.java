@@ -42,6 +42,29 @@ public class TabShare extends ListFragment {
         // Required empty public constructor
     }
 
+    public TabShare(JSONArray response) {
+        JSONObject temp;
+        try {
+            Log.d("tab-share", String.valueOf(response.get(0)));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        for (int i = 0; i < response.length(); i++) {
+            try {
+                temp = response.getJSONObject(i);
+
+                Log.d("title", temp.getString("title"));
+
+//                adapter.addItem(temp.getString("title"),
+//                        temp.getString("summary"),
+//                        temp.getString("content"),
+//                        temp.getString("_id"));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     /**
      * Constructor
      * @param items - Bookmark data
@@ -81,13 +104,6 @@ public class TabShare extends ListFragment {
         /**
          * 서버로부터 데이터를 받아와서 처리 코드 필요
          */
-
-        adapter.addItem("1245", "Summary1", "contents", "13464331f");
-        adapter.addItem("Title2", "Summary1", "contents", "13464331f");
-        adapter.addItem("Title3", "Summary5", "contents", "13464331f");
-        adapter.addItem("123", "Summary4", "contents", "13464331f");
-        adapter.addItem("Title", "Summary1", "contents", "13464331f");
-        adapter.addItem("1", "Summary1", "contents", "13464331f");
 
         return super.onCreateView(inflater, container, savedInstanceState);
     }

@@ -31,6 +31,22 @@ public class TabBookmark extends ListFragment {
         // Required empty public constructor
     }
 
+    public TabBookmark(JSONArray response) {
+        JSONObject temp;
+
+        for (int i = 0; i < response.length(); i++) {
+            try {
+                temp = (JSONObject) response.get(i);
+                adapter.addItem(temp.getString("title"),
+                        temp.getString("summary"),
+                        temp.getString("content"),
+                        temp.getString("_id"));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     /**
      * Constructor
      * @param items - Bookmark data

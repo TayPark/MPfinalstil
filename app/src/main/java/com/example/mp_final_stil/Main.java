@@ -65,12 +65,12 @@ public class Main extends AppCompatActivity {
         bookmarkList = findViewById(R.id.bookmarkList);
 
         // images in tabs
-        ArrayList<Integer> frag = new ArrayList<>();
-        frag.add(R.drawable.my_on);
-        frag.add(R.drawable.stil_on);
-        frag.add(R.drawable.bookmark_on);
+        ArrayList<Integer> headerIcons = new ArrayList<>();
+        headerIcons.add(R.drawable.my_on);
+        headerIcons.add(R.drawable.stil_on);
+        headerIcons.add(R.drawable.bookmark_on);
         for (int i = 0; i < NUMBER_OF_TABS; i++) {
-            tabs.getTabAt(i).setIcon(frag.get(i));
+            tabs.getTabAt(i).setIcon(headerIcons.get(i));
         }
 
         /* Initial fetch from server (my tab) */
@@ -79,6 +79,8 @@ public class Main extends AppCompatActivity {
 
         queue.add(new JsonArrayRequest(Request.Method.GET, url, null, response -> {
             try {
+                TabMy newerMyTab = new TabMy(response);
+                adapter.updateItem(0, newerMyTab);
                 Log.d("Stil-my-init", response.toString(2));
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -92,9 +94,7 @@ public class Main extends AppCompatActivity {
         tabs.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(viewPager) {
             @Override
             public void onTabSelected(@NonNull TabLayout.Tab tab) {
-                super.onTabSelected(tab);
                 int tabPosition = tab.getPosition();
-                JsonArrayRequest request = null;
 
                 if (tabPosition == 0) {
                     url = "http://15.164.96.105:8080/stil?type=my&email=" + userAccount.getString("email", null);
@@ -106,15 +106,25 @@ public class Main extends AppCompatActivity {
                     Toast.makeText(Main.this, "Wrong access on tab: " + tabs.getSelectedTabPosition(), Toast.LENGTH_SHORT).show();
                 }
 
-                request = new JsonArrayRequest(Request.Method.GET, url, null, response -> {
+                queue.add(new JsonArrayRequest(Request.Method.GET, url, null, response -> {
                     try {
+                        if (tabPosition == 0) {
+                            TabMy newMyTab = new TabMy(response);
+                            adapter.updateItem(0, newMyTab);
+                        } else if (tabPosition == 1) {
+                            TabShare newShareTab = new TabShare(response);
+                            adapter.updateItem(1, newShareTab);
+                        } else if (tabPosition == 2) {
+                            TabBookmark newBookmarkTab = new TabBookmark(response);
+                            adapter.updateItem(1, newBookmarkTab);
+                        }
+
                         Log.d("Stil-tab-" + tabs.getSelectedTabPosition(), response.toString(2));
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
                     Toast.makeText(Main.this, response.toString(), Toast.LENGTH_SHORT).show();
-                }, error -> Log.d("Stil-tab-" + tabs.getSelectedTabPosition(), error.toString()));
-                queue.add(request);
+                }, error -> Log.d("Stil-tab-" + tabs.getSelectedTabPosition(), error.toString())));
             }
         });
     }

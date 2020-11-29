@@ -81,6 +81,8 @@ public class CheckBoxAdapter extends BaseAdapter {
             }
         });
 
+
+
         return convertView;
     }
 
