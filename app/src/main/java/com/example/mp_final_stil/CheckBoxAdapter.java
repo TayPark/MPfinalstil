@@ -1,13 +1,15 @@
 package com.example.mp_final_stil;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.CheckBox;
+import android.widget.Toast;
 
-import java.sql.ClientInfoStatus;
 import java.util.ArrayList;
 
 
@@ -66,6 +68,19 @@ public class CheckBoxAdapter extends BaseAdapter {
         CheckBoxItem checkBoxItem = checkBoxItems.get(position);
         checkBox.setText(checkBoxItem.getContent());
 
+        checkBox.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (checkBox.isChecked()) {
+                    checkBox.setPaintFlags(Paint.STRIKE_THRU_TEXT_FLAG);
+                    checkBox.setBackgroundColor(Color.parseColor("#c4c4c4"));
+                } else {
+                    checkBox.setPaintFlags(0);
+                    checkBox.setBackgroundColor(Color.WHITE);
+                }
+            }
+        });
+
         return convertView;
     }
 
@@ -78,5 +93,10 @@ public class CheckBoxAdapter extends BaseAdapter {
     public void removeItem(int position) {
         checkBoxItems.remove(position);
     }
+
+    public void setCheckBoxItems(ArrayList<CheckBoxItem> checkBoxItems) {
+        this.checkBoxItems = checkBoxItems;
+    }
+
 
 }

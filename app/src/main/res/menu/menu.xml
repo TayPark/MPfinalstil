@@ -1,6 +1,12 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
     <item
-        android:id="@+id/deploy"
+        android:id="@+id/saveMenu"
+        android:title="Save my TIL"
+        />
+
+    <item
+        android:id="@+id/deployMenu"
         android:title="Share TIL"
         />
+
 </menu>

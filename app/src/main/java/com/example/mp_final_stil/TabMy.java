@@ -13,9 +13,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -26,7 +29,7 @@ import java.util.ArrayList;
 public class TabMy extends ListFragment {
     private ArrayList<String> items = new ArrayList<>();
     CheckBoxAdapter adapter;
-//    LinearLayout myTabLayout;
+    CheckBox checkBox;
 
     public TabMy() {
         // Required empty public constructor
@@ -70,6 +73,8 @@ public class TabMy extends ListFragment {
     public void onListItemClick(@NonNull ListView l, @NonNull View v, int position, long id) {
 
     }
+
+
 
     public void removeItem(int position) {
 
