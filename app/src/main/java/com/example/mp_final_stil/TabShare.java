@@ -54,7 +54,7 @@ public class TabShare extends ListFragment {
                 temp = response.getJSONObject(i);
 
                 Log.d("title", temp.getString("title"));
-
+                this.items.add(temp);
 //                adapter.addItem(temp.getString("title"),
 //                        temp.getString("summary"),
 //                        temp.getString("content"),
@@ -104,7 +104,16 @@ public class TabShare extends ListFragment {
         /**
          * 서버로부터 데이터를 받아와서 처리 코드 필요
          */
-
+        for(JSONObject data: items) {
+            try {
+                adapter.addItem(data.getString("title"),
+                        data.getString("summary"),
+                        data.getString("content"),
+                        data.getString("_id"));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
         return super.onCreateView(inflater, container, savedInstanceState);
     }
 
