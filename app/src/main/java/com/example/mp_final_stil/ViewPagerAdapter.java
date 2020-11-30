@@ -6,6 +6,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
@@ -25,29 +26,15 @@ import java.util.ArrayList;
 class ViewpagerAdapter extends FragmentStatePagerAdapter {
     static final int NUM_FRAGS = 3;
     private ArrayList<Fragment> fragList = new ArrayList<>();
-
+    private ArrayList<String> titles = new ArrayList<>();
     public ViewpagerAdapter(@NonNull FragmentManager fm) {
         super(fm);
         fragList.add(new TabMy());
         fragList.add(new TabShare());
         fragList.add(new TabBookmark());
-    }
-
-    public ViewpagerAdapter(@NonNull FragmentManager fm, int position, JSONArray data) {
-        super(fm);
-        if (position == 0) {
-            fragList.add(new TabMy(data));
-            fragList.add(new TabShare());
-            fragList.add(new TabBookmark());
-        } else if (position == 1) {
-            fragList.add(new TabMy());
-            fragList.add(new TabShare(data));
-            fragList.add(new TabBookmark());
-        } else if (position == 2) {
-            fragList.add(new TabMy());
-            fragList.add(new TabShare());
-            fragList.add(new TabBookmark(data));
-        }
+        titles.add("My");
+        titles.add("Share");
+        titles.add("Bookmark");
     }
 
     @Override
@@ -86,5 +73,14 @@ class ViewpagerAdapter extends FragmentStatePagerAdapter {
 
     public void updateItem(int position, Fragment frag) {
         fragList.set(position, frag);
+        this.notifyDataSetChanged();
     }
+
+    @Nullable
+    @Override
+    public CharSequence getPageTitle(int position) {
+        return titles.get(position);
+    }
+
+
 }
