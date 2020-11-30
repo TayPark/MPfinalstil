@@ -65,6 +65,7 @@ class ViewpagerAdapter extends FragmentStatePagerAdapter {
     @NonNull
     @Override
     public Object instantiateItem(@NonNull ViewGroup container, int position) {
+
         return super.instantiateItem(container, position);
     }
 
@@ -86,5 +87,6 @@ class ViewpagerAdapter extends FragmentStatePagerAdapter {
 
     public void updateItem(int position, Fragment frag) {
         fragList.set(position, frag);
+        notifyDataSetChanged();
     }
 }
