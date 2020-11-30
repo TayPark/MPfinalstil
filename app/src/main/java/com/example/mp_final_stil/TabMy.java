@@ -69,33 +69,9 @@ public class TabMy extends ListFragment {
 
         return super.onCreateView(inflater, container, savedInstanceState);
     }
-
-    @Override
-    public void onListItemClick(@NonNull ListView l, @NonNull View v, int position, long id) {
-
-    }
-
-    public void getItems(JSONArray items) {
-        try {
-            for (int i = 0; i < items.length(); i++) {
-                this._items.add(items.get(i).toString());
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void addItems(JSONArray items) {
-        for (int i = 0; i < items.length(); i++) {
-            try {
-                adapter.addItem(items.getString(i));
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    public void removeItem(int position) {
-
-    }
+//
+//    @Override
+//    public void onListItemClick(@NonNull ListView l, @NonNull View v, int position, long id) {
+//
+//    }
 }

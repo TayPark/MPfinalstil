@@ -81,8 +81,6 @@ public class CheckBoxAdapter extends BaseAdapter {
             }
         });
 
-
-
         return convertView;
     }
 
@@ -91,14 +89,5 @@ public class CheckBoxAdapter extends BaseAdapter {
 
         checkBoxItems.add(item);
     }
-
-    public void removeItem(int position) {
-        checkBoxItems.remove(position);
-    }
-
-    public void setCheckBoxItems(ArrayList<CheckBoxItem> checkBoxItems) {
-        this.checkBoxItems = checkBoxItems;
-    }
-
 
 }

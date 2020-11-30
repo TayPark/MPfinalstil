@@ -93,11 +93,6 @@ public class Main extends AppCompatActivity {
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabs) {
             @Override
             public void onPageSelected(int position) {
-                Log.e("탭 선택 리스너", "호출됨");
-                /**
-                 * 현재 해당 메소드가 무한 호출이 되고있음.
-                 * 추측컨대, viewpager를 업데이트 하면서 adapter.notifyDataSetChanged() 가 해당 현상 발생.
-                 */
                 int tabPosition = position;
                 if (tabPosition == 0) {
                     url = "http://15.164.96.105:8080/stil?type=my&email=" + userAccount.getString("email", null);
