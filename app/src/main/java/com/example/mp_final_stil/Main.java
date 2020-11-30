@@ -120,7 +120,7 @@ public class Main extends AppCompatActivity {
                             adapter.updateItem(1, newShareTab);
                         } else if (tabPosition == 2) {
                             TabBookmark newBookmarkTab = new TabBookmark(response);
-                            adapter.updateItem(1, newBookmarkTab);
+                            adapter.updateItem(2, newBookmarkTab);
                         }
                         Log.d("Stil-tab-" + tabs.getSelectedTabPosition(), response.toString(2));
                     } catch (JSONException e) {
