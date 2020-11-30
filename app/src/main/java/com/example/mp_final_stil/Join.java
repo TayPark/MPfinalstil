@@ -33,24 +33,20 @@ public class Join extends AppCompatActivity {
         password = findViewById(R.id.password);
         joinBtn = findViewById(R.id.joinBtn);
 
-        joinBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                JSONObject joinAccount = new JSONObject();
-                try {
-                    joinAccount.put("email", email.getText().toString());
-                    joinAccount.put("password", password.getText().toString());
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+        joinBtn.setOnClickListener(v -> {
+            JSONObject joinAccount = new JSONObject();
+            try {
+                joinAccount.put("email", email.getText().toString());
+                joinAccount.put("password", password.getText().toString());
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
 
-                RequestQueue queue = Volley.newRequestQueue(Join.this);
-                String url = "http://15.164.96.105:8080/user/join";
-                JsonObjectRequest joinRequest = new JsonObjectRequest(
-                        Request.Method.POST, url, joinAccount
-                        , new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
+            RequestQueue queue = Volley.newRequestQueue(Join.this);
+            String url = "http://15.164.96.105:8080/user/join";
+            JsonObjectRequest joinRequest = new JsonObjectRequest(
+                    Request.Method.POST, url, joinAccount
+                    , response -> {
                         Log.d("join-success", response.toString());
                         try {
                             if (response.get("ok").toString().equals("1")) {
@@ -63,21 +59,16 @@ public class Join extends AppCompatActivity {
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
-                    }
-                }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Log.e("join-error", error.toString());
-                        if (error.toString().equals("com.android.volley.ClientError")) {
-                            Toast.makeText(Join.this, "Duplicated email. Try other one", Toast.LENGTH_SHORT).show();
-                        } else {
-                            Toast.makeText(Join.this, String.valueOf(error), Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
+                    }, error -> {
+                Log.e("join-error", error.toString());
+                if (error.toString().equals("com.android.volley.ClientError")) {
+                    Toast.makeText(Join.this, "Duplicated email. Try other one", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(Join.this, String.valueOf(error), Toast.LENGTH_SHORT).show();
+                }
+            });
 
-                queue.add(joinRequest);
-            }
+            queue.add(joinRequest);
         });
     }
 }
