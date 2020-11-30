@@ -90,16 +90,15 @@ public class Main extends AppCompatActivity {
             Log.d("Stil-my-init", error.toString());
             Toast.makeText(Main.this, error.toString(), Toast.LENGTH_SHORT).show();
         }));
-
-        tabs.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(viewPager) {
+        viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabs) {
             @Override
-            public void onTabSelected(@NonNull TabLayout.Tab tab) {
+            public void onPageSelected(int position) {
                 Log.e("탭 선택 리스너", "호출됨");
                 /**
                  * 현재 해당 메소드가 무한 호출이 되고있음.
                  * 추측컨대, viewpager를 업데이트 하면서 adapter.notifyDataSetChanged() 가 해당 현상 발생.
                  */
-                int tabPosition = tab.getPosition();
+                int tabPosition = position;
                 if (tabPosition == 0) {
                     url = "http://15.164.96.105:8080/stil?type=my&email=" + userAccount.getString("email", null);
                 } else if (tabPosition == 1) {
@@ -109,7 +108,6 @@ public class Main extends AppCompatActivity {
                 } else {
                     Toast.makeText(Main.this, "Wrong access on tab: " + tabs.getSelectedTabPosition(), Toast.LENGTH_SHORT).show();
                 }
-
                 queue.add(new JsonArrayRequest(Request.Method.GET, url, null, response -> {
                     try {
                         if (tabPosition == 0) {
@@ -126,6 +124,7 @@ public class Main extends AppCompatActivity {
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
+
                 }, error -> Log.d("Stil-tab-" + tabs.getSelectedTabPosition(), error.toString())));
             }
         });
