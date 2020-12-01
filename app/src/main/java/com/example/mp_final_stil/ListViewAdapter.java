@@ -10,6 +10,10 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 
 public class ListViewAdapter extends BaseAdapter {
@@ -62,7 +66,19 @@ public class ListViewAdapter extends BaseAdapter {
 
         titleTextView.setText(listViewItem.getTitle());
         summaryTextView.setText(listViewItem.getSummary());
-        contentTextView.setText(listViewItem.getContent());
+
+        String contentForEndUser = "";
+
+        try {
+            JSONArray contents = new JSONArray(listViewItem.getContent());
+            for (int i = 0; i < contents.length(); i++) {
+                contentForEndUser += i + ". " + contents.get(i) + "\n";
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        contentTextView.setText(contentForEndUser);
         author.setText(listViewItem.getAuthor());
         idHolder.setText(listViewItem.getId());
 
