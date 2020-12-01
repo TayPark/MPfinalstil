@@ -1,14 +1,13 @@
 package com.example.mp_final_stil;
 
 import android.app.Activity;
-import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.CheckBox;
+import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -17,17 +16,14 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.viewpager.widget.PagerAdapter;
+import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
 
 import org.json.JSONArray;
@@ -141,7 +137,7 @@ public class Main extends AppCompatActivity {
     private void addTilListener() {
         /* Set dialog for deployment and inflate. */
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Share TIL");
+        builder.setTitle("Add TIL");
 
         final View dialogLayout = getLayoutInflater().inflate(R.layout.add_til_dialog, null);
         builder.setView(dialogLayout);
@@ -205,8 +201,8 @@ public class Main extends AppCompatActivity {
                     requestBody.put("summary", summary.getText().toString());
                     requestBody.put("author", userAccount.getString("email", null));
                     JSONArray contentArray = new JSONArray();
-                    contentArray.put("hello1");
-                    contentArray.put("hello2");
+
+                    /* update as real data... but why it works? */
 
                     requestBody.put("content", contentArray);
                 } catch (JSONException e) {
