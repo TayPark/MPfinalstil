@@ -11,9 +11,9 @@
         android:fillViewport="true">
 
         <ListView
+            android:id="@+id/shareList"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/shareList"></ListView>
+            android:layout_height="match_parent"></ListView>
 
     </ScrollView>
 </FrameLayout>
