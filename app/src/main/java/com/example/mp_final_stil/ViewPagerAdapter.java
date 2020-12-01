@@ -27,15 +27,11 @@ import java.util.ArrayList;
 class ViewpagerAdapter extends FragmentStatePagerAdapter {
     static final int NUM_FRAGS = 3;
     private ArrayList<Fragment> fragList = new ArrayList<>();
-    private ArrayList<String> titles = new ArrayList<>();
     public ViewpagerAdapter(@NonNull FragmentManager fm) {
         super(fm);
         fragList.add(new TabMy());
         fragList.add(new TabShare());
         fragList.add(new TabBookmark());
-        titles.add("My");
-        titles.add("Share");
-        titles.add("Bookmark");
     }
 
     @Override
@@ -70,16 +66,5 @@ class ViewpagerAdapter extends FragmentStatePagerAdapter {
     @Override
     public void destroyItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
         super.destroyItem(container, position, object);
-    }
-
-    public void updateItem(int position, Fragment frag) {
-        fragList.set(position, frag);
-        this.notifyDataSetChanged();
-    }
-
-    @Nullable
-    @Override
-    public CharSequence getPageTitle(int position) {
-        return titles.get(position);
     }
 }

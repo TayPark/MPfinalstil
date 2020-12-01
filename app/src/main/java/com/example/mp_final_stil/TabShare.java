@@ -7,6 +7,7 @@ import android.media.MediaCodec;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.ListFragment;
 
 import android.util.Log;
@@ -35,7 +36,7 @@ import java.util.ArrayList;
 
 public class TabShare extends ListFragment {
     private ArrayList<JSONObject> items = new ArrayList<>();
-    ListViewAdapter adapter;
+    ListViewAdapter adapter = new ListViewAdapter();
     TextView titleTextView, summaryTextView, contentTextView, emailHolder, idHolder;
 
     Button bookmarkBtn;
@@ -44,28 +45,7 @@ public class TabShare extends ListFragment {
 
     public TabShare() {
         // Required empty public constructor
-    }
-
-    public TabShare(JSONArray response) {
-        JSONObject temp;
-        try {
-            Log.d("tab-share", String.valueOf(response.get(0)));
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        for (int i = 0; i < response.length(); i++) {
-            try {
-                temp = response.getJSONObject(i);
-                this.items.add(temp);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    public static TabMy newInstance() {
-        TabMy fragment = new TabMy();
-        return fragment;
+        adapter.notifyDataSetChanged();
     }
 
     @Override
@@ -74,22 +54,37 @@ public class TabShare extends ListFragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        adapter = new ListViewAdapter();
-        setListAdapter(adapter);
 
-        for(JSONObject data: items) {
-            try {
-                adapter.addItem(data.getString("title"),
-                        data.getString("summary"),
-                        data.getString("content"),
-                        data.getString("author"),
-                        data.getString("_id"));
-            } catch (JSONException e) {
-                e.printStackTrace();
+        Context context = getContext();
+        RequestQueue queue = Volley.newRequestQueue(context);
+
+        String url = "http://15.164.96.105:8080/stil?type=share";
+        queue.add(new JsonArrayRequest(Request.Method.GET, url, null, response -> {
+            JSONObject data;
+            Log.d("res", response.toString());
+            for (int i = 0; i < response.length(); i++) {
+                try {
+                    data = response.getJSONObject(i);
+                    adapter.addItem(data.getString("title"),
+                            data.getString("summary"),
+                            data.getString("content"),
+                            data.getString("author"),
+                            data.getString("_id"));
+                    adapter.notifyDataSetChanged();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
-        }
+        }, error -> {
+            Toast.makeText(context, String.valueOf(error), Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, "Delete failed", Toast.LENGTH_SHORT).show();
+        }));
+
+        queue.start();
+
+        setListAdapter(adapter);
 
         return super.onCreateView(inflater, container, savedInstanceState);
     }

@@ -64,50 +64,14 @@ public class Main extends AppCompatActivity {
         shareList = findViewById(R.id.shareList);
         bookmarkList = findViewById(R.id.bookmarkList);
 
-        /* Initial fetch from server (my tab) */
-        url = "http://15.164.96.105:8080/stil?type=my&email=" + userAccount.getString("email", null);
-        RequestQueue queue = Volley.newRequestQueue(this);
-
-        queue.add(new JsonArrayRequest(Request.Method.GET, url, null, response -> {
-            try {
-                TabMy newerMyTab = new TabMy(response);
-                adapter.updateItem(0, newerMyTab);
-                Log.d("Stil-my-init", response.toString(2));
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }, error -> {
-            Log.d("Stil-my-init", error.toString());
-            Toast.makeText(Main.this, error.toString(), Toast.LENGTH_SHORT).show();
-        }));
-
-        viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabs) {
-            @Override
-            public void onPageSelected(int position) {
-                int tabPosition = position;
-                if (tabPosition == 0) {
-                    url = "http://15.164.96.105:8080/stil?type=my&email=" + userAccount.getString("email", null);
-                } else if (tabPosition == 1) {
-                    url = "http://15.164.96.105:8080/stil?type=share";
-                } else if (tabPosition == 2) {
-                    url = "http://15.164.96.105:8080/stil?type=bookmark&email=" + userAccount.getString("email", null);
-                } else {
-                    Toast.makeText(Main.this, "Wrong access on tab: " + tabs.getSelectedTabPosition(), Toast.LENGTH_SHORT).show();
-                }
-                queue.add(new JsonArrayRequest(Request.Method.GET, url, null, response -> {
-                    if (tabPosition == 0) {
-                        TabMy newMyTab = new TabMy(response);
-                        adapter.updateItem(0, newMyTab);
-                    } else if (tabPosition == 1) {
-                        TabShare newShareTab = new TabShare(response);
-                        adapter.updateItem(1, newShareTab);
-                    } else if (tabPosition == 2) {
-                        TabBookmark newBookmarkTab = new TabBookmark(response);
-                        adapter.updateItem(2, newBookmarkTab);
-                    }
-                }, error -> Log.d("Stil-tab-" + tabs.getSelectedTabPosition(), error.toString())));
-            }
-        });
+        // images in tabs
+        ArrayList<Integer> headerIcons = new ArrayList<>();
+        headerIcons.add(R.drawable.my_on);
+        headerIcons.add(R.drawable.stil_on);
+        headerIcons.add(R.drawable.bookmark_on);
+        for (int i = 0; i < NUMBER_OF_TABS; i++) {
+            tabs.getTabAt(i).setIcon(headerIcons.get(i));
+        }
     }
 
     @Override
