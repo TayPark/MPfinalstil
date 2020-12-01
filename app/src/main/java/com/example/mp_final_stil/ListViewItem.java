@@ -10,10 +10,11 @@ public class ListViewItem  {
     private String _author;
     private boolean _openness;
 
-    public ListViewItem(String title, String summary, String content, String id) {
+    public ListViewItem(String title, String summary, String content, String author, String id) {
         this._title = title;
         this._summary = summary;
         this._content = content;
+        this._author = author;
         this._id = id;
     }
 
@@ -63,4 +64,8 @@ public class ListViewItem  {
     public Boolean getOpenness() { return this._openness; }
 
     public String getId() { return this._id; }
+
+    public String getAuthor() {
+        return this._author;
+    }
 }

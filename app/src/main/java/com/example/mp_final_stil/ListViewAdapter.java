@@ -55,18 +55,22 @@ public class ListViewAdapter extends BaseAdapter {
         TextView titleTextView = convertView.findViewById(R.id.titleTextView);
         TextView summaryTextView = convertView.findViewById(R.id.summaryTextView);
         TextView contentTextView = convertView.findViewById(R.id.contentTextView);
+        TextView author = convertView.findViewById(R.id.itemAuthor);
+        TextView idHolder = convertView.findViewById(R.id.itemId);
 
         ListViewItem listViewItem = listViewItemList.get(position);
 
         titleTextView.setText(listViewItem.getTitle());
         summaryTextView.setText(listViewItem.getSummary());
         contentTextView.setText(listViewItem.getContent());
+        author.setText(listViewItem.getAuthor());
+        idHolder.setText(listViewItem.getId());
 
         return convertView;
     }
 
-    public void addItem(String title, String summary, String content, String id) {
-        ListViewItem item = new ListViewItem(title, summary, content, id);
+    public void addItem(String title, String summary, String content, String author, String id) {
+        ListViewItem item = new ListViewItem(title, summary, content, author, id);
 
         listViewItemList.add(item);
     }

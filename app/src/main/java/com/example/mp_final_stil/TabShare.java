@@ -1,6 +1,9 @@
 package com.example.mp_final_stil;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.media.MediaCodec;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -16,9 +19,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
+import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.google.android.material.tabs.TabLayout;
 
 import org.json.JSONArray;
@@ -30,9 +36,7 @@ import java.util.ArrayList;
 public class TabShare extends ListFragment {
     private ArrayList<JSONObject> items = new ArrayList<>();
     ListViewAdapter adapter;
-    TextView titleTextView;
-    TextView summaryTextView;
-    TextView contentTextView;
+    TextView titleTextView, summaryTextView, contentTextView, emailHolder, idHolder;
 
     Button bookmarkBtn;
     Button closeBtn;
@@ -40,6 +44,8 @@ public class TabShare extends ListFragment {
 
     public TabShare() {
         // Required empty public constructor
+        Bundle bundle = new Bundle();
+
     }
 
     public TabShare(JSONArray response) {
@@ -52,36 +58,10 @@ public class TabShare extends ListFragment {
         for (int i = 0; i < response.length(); i++) {
             try {
                 temp = response.getJSONObject(i);
-
-                Log.d("title", temp.getString("title"));
                 this.items.add(temp);
-//                adapter.addItem(temp.getString("title"),
-//                        temp.getString("summary"),
-//                        temp.getString("content"),
-//                        temp.getString("_id"));
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-        }
-    }
-
-    /**
-     * Constructor
-     * @param items - Bookmark data
-     * @throws JSONException
-     */
-    public TabShare(ArrayList<JSONObject> items) {
-        try {
-            for (JSONObject each : items) {
-                String title = each.getString("title");
-                String summary = each.getString("title");
-                String content = each.getString("content");
-                String _id = each.getString("_id");
-
-                adapter.addItem(title, summary, content, _id);
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
         }
     }
 
@@ -101,19 +81,18 @@ public class TabShare extends ListFragment {
         adapter = new ListViewAdapter();
         setListAdapter(adapter);
 
-        /**
-         * 서버로부터 데이터를 받아와서 처리 코드 필요
-         */
         for(JSONObject data: items) {
             try {
                 adapter.addItem(data.getString("title"),
                         data.getString("summary"),
                         data.getString("content"),
+                        data.getString("author"),
                         data.getString("_id"));
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         }
+
         return super.onCreateView(inflater, container, savedInstanceState);
     }
 
@@ -133,6 +112,8 @@ public class TabShare extends ListFragment {
         titleTextView = v.findViewById(R.id.titleTextView);
         summaryTextView = v.findViewById(R.id.summaryTextView);
         contentTextView = v.findViewById(R.id.contentTextView);
+        emailHolder = v.findViewById(R.id.itemAuthor);
+        idHolder = v.findViewById(R.id.itemId);
 
         bookmarkBtn = v.findViewById(R.id.bookmarkBtn);
         closeBtn = v.findViewById(R.id.closeBtn);
@@ -144,12 +125,16 @@ public class TabShare extends ListFragment {
         summaryTextView.setVisibility(View.GONE);
         contentTextView.setVisibility(View.VISIBLE);
 
+        SharedPreferences userAccount = getContext().getSharedPreferences("autoLogin", Context.MODE_PRIVATE);
+        if (userAccount.getString("email", null).equals(emailHolder.getText())) {
+            deleteBtn.setVisibility(View.VISIBLE);
+            deleteBtn.setBackgroundColor(Color.parseColor("#e65a1e"));
+        }
+
         bookmarkBtn.setVisibility(View.VISIBLE);
         closeBtn.setVisibility(View.VISIBLE);
-        deleteBtn.setVisibility(View.VISIBLE);
 
         bookmarkBtn.setBackgroundColor(Color.parseColor("#ffb347"));
-        deleteBtn.setBackgroundColor(Color.parseColor("#e65a1e"));
         closeBtn.setBackgroundColor(Color.parseColor("#21b2de"));
 
         /**
@@ -186,13 +171,35 @@ public class TabShare extends ListFragment {
      * @return Button's OnClickListener that add bookmark for current user's email
      */
     private View.OnClickListener addBookmark() {
-        return new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                /**
-                 * 통신 코드 필요
-                 */
+        return v -> {
+            Context context = getContext();
+            ViewGroup parent = (ViewGroup) v.getParent();
+            TextView idHolder = null;
+            for (int i = 0; i < parent.getChildCount(); i++) {
+                if (parent.getChildAt(i).getId() == R.id.itemId) {
+                    idHolder = (TextView) parent.getChildAt(i);
+                    break;
+                }
             }
+            String itemId = idHolder.getText().toString();
+            SharedPreferences userAccount = getActivity().getSharedPreferences("autoLogin", Context.MODE_PRIVATE);
+            JSONObject requestBody = new JSONObject();
+            try {
+                requestBody.put("email", userAccount.getString("email", null));
+                requestBody.put("stilId", itemId);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            Log.e("Share-add-bookmark", userAccount.getString("email", null) + " " + itemId);
+
+            RequestQueue queue = Volley.newRequestQueue(context);
+            String url = "http://15.164.96.105:8080/stil/bookmark";
+            queue.add(new JsonObjectRequest(Request.Method.POST, url, requestBody, response -> {
+                Toast.makeText(context, "Bookmarked successfully", Toast.LENGTH_SHORT).show();
+            }, error -> {
+                Toast.makeText(context, String.valueOf(error), Toast.LENGTH_SHORT).show();
+            }));
         };
     }
 
@@ -201,13 +208,33 @@ public class TabShare extends ListFragment {
      * @return
      */
     private View.OnClickListener deleteContent() {
-        return new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                /**
-                 * 통신 코드 필요
-                 */
+        return v -> {
+            Context context = getContext();
+            ViewGroup parent = (ViewGroup) v.getParent();
+            TextView idHolder = null;
+            for (int i = 0; i < parent.getChildCount(); i++) {
+                if (parent.getChildAt(i).getId() == R.id.itemId) {
+                    idHolder = (TextView) parent.getChildAt(i);
+                    break;
+                }
             }
+            String itemId = idHolder.getText().toString();
+            SharedPreferences userAccount = getActivity().getSharedPreferences("autoLogin", Context.MODE_PRIVATE);
+            JSONObject requestBody = new JSONObject();
+            try {
+                requestBody.put("email", userAccount.getString("email", null));
+                requestBody.put("stilId", itemId);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            RequestQueue queue = Volley.newRequestQueue(context);
+            String url = "http://15.164.96.105:8080/stil";
+            queue.add(new JsonObjectRequest(Request.Method.DELETE, url, requestBody, response -> {
+                Toast.makeText(context, "Bookmarked successfully", Toast.LENGTH_SHORT).show();
+            }, error -> {
+                Toast.makeText(context, String.valueOf(error), Toast.LENGTH_SHORT).show();
+            }));
         };
     }
 }

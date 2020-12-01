@@ -76,11 +76,11 @@ public class Main extends AppCompatActivity {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            Toast.makeText(Main.this, response.toString(), Toast.LENGTH_SHORT).show();
         }, error -> {
             Log.d("Stil-my-init", error.toString());
             Toast.makeText(Main.this, error.toString(), Toast.LENGTH_SHORT).show();
         }));
+
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabs) {
             @Override
             public void onPageSelected(int position) {
@@ -95,22 +95,16 @@ public class Main extends AppCompatActivity {
                     Toast.makeText(Main.this, "Wrong access on tab: " + tabs.getSelectedTabPosition(), Toast.LENGTH_SHORT).show();
                 }
                 queue.add(new JsonArrayRequest(Request.Method.GET, url, null, response -> {
-                    try {
-                        if (tabPosition == 0) {
-                            TabMy newMyTab = new TabMy(response);
-                            adapter.updateItem(0, newMyTab);
-                        } else if (tabPosition == 1) {
-                            TabShare newShareTab = new TabShare(response);
-                            adapter.updateItem(1, newShareTab);
-                        } else if (tabPosition == 2) {
-                            TabBookmark newBookmarkTab = new TabBookmark(response);
-                            adapter.updateItem(2, newBookmarkTab);
-                        }
-                        Log.d("Stil-tab-" + tabs.getSelectedTabPosition(), response.toString(2));
-                    } catch (JSONException e) {
-                        e.printStackTrace();
+                    if (tabPosition == 0) {
+                        TabMy newMyTab = new TabMy(response);
+                        adapter.updateItem(0, newMyTab);
+                    } else if (tabPosition == 1) {
+                        TabShare newShareTab = new TabShare(response);
+                        adapter.updateItem(1, newShareTab);
+                    } else if (tabPosition == 2) {
+                        TabBookmark newBookmarkTab = new TabBookmark(response);
+                        adapter.updateItem(2, newBookmarkTab);
                     }
-
                 }, error -> Log.d("Stil-tab-" + tabs.getSelectedTabPosition(), error.toString())));
             }
         });

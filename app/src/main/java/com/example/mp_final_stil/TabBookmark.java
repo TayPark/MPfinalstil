@@ -1,5 +1,6 @@
 package com.example.mp_final_stil;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -14,6 +15,12 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -25,7 +32,7 @@ public class TabBookmark extends ListFragment {
     private ArrayList<JSONObject> items = new ArrayList<>();
     ListViewAdapter adapter;
     Button bookmarkBtn, closeBtn, deleteBtn;
-    TextView titleTextView, summaryTextView, contentTextView;
+    TextView titleTextView, summaryTextView, contentTextView, emailHolder, idHolder;
 
     public TabBookmark() {
         // Required empty public constructor
@@ -33,39 +40,14 @@ public class TabBookmark extends ListFragment {
 
     public TabBookmark(JSONArray response) {
         JSONObject temp;
-
         for (int i = 0; i < response.length(); i++) {
             try {
-                temp = (JSONObject) response.get(i);
-                adapter.addItem(temp.getString("title"),
-                        temp.getString("summary"),
-                        temp.getString("content"),
-                        temp.getString("_id"));
+                temp = response.getJSONObject(i);
+                this.items.add(temp);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         }
-    }
-
-    /**
-     * Constructor
-     * @param items - Bookmark data
-     * @throws JSONException
-     */
-    public TabBookmark(ArrayList<JSONObject> items) {
-        try {
-            for (JSONObject each : items) {
-                String title = each.getString("title");
-                String summary = each.getString("title");
-                String content = each.getString("content");
-                String _id = each.getString("_id");
-
-                adapter.addItem(title, summary, content, _id);
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
     }
 
     public static TabBookmark newInstance() {
@@ -84,12 +66,17 @@ public class TabBookmark extends ListFragment {
         adapter = new ListViewAdapter();
         setListAdapter(adapter);
 
-        /**
-         * 서버에서 데이터를 받아와서 처리해야 함
-         */
-
-        adapter.addItem("1245", "Summary1", "contents", "231rf34g3");
-        adapter.addItem("Title2", "Summary1", "contents", "ywg45gfw4b");
+        for(JSONObject data: items) {
+            try {
+                adapter.addItem(data.getString("title"),
+                        data.getString("summary"),
+                        data.getString("content"),
+                        data.getString("author"),
+                        data.getString("_id"));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
 
         return super.onCreateView(inflater, container, savedInstanceState);
     }
@@ -162,13 +149,39 @@ public class TabBookmark extends ListFragment {
      * @return
      */
     private View.OnClickListener deleteBookmark() {
-        return new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                /**
-                 * 통신 코드 필요
-                 */
+        return v -> {
+            Context context = getContext();
+            ViewGroup parent = (ViewGroup) v.getParent();
+            TextView idHolder = null;
+            for (int i = 0; i < parent.getChildCount(); i++) {
+                if (parent.getChildAt(i).getId() == R.id.itemId) {
+                    idHolder = (TextView) parent.getChildAt(i);
+                    break;
+                }
             }
+            String itemId = idHolder.getText().toString();
+            SharedPreferences userAccount = getActivity().getSharedPreferences("autoLogin", Context.MODE_PRIVATE);
+            JSONObject requestBody = new JSONObject();
+            try {
+                requestBody.put("email", userAccount.getString("email", null));
+                requestBody.put("stilId", itemId);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            try {
+                Log.e("Bookmark-delete", requestBody.getString("email") + " " + requestBody.getString("stilId"));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            RequestQueue queue = Volley.newRequestQueue(context);
+            String url = "http://15.164.96.105:8080/stil/bookmark";
+            queue.add(new JsonObjectRequest(Request.Method.DELETE, url, requestBody, response -> {
+                Toast.makeText(context, "Bookmark released successfully", Toast.LENGTH_SHORT).show();
+            }, error -> {
+                Toast.makeText(context, String.valueOf(error), Toast.LENGTH_SHORT).show();
+            }));
         };
     }
 }
