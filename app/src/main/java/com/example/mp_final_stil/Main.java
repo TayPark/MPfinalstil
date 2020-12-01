@@ -64,6 +64,12 @@ public class Main extends AppCompatActivity {
         shareList = findViewById(R.id.shareList);
         bookmarkList = findViewById(R.id.bookmarkList);
 
+        /* Set icons */
+        ArrayList<Integer> headerIcons = new ArrayList<>();
+        headerIcons.add(R.drawable.my_on);
+        headerIcons.add(R.drawable.stil_on);
+        headerIcons.add(R.drawable.bookmark_on);
+
         /* Initial fetch from server (my tab) */
         url = "http://15.164.96.105:8080/stil?type=my&email=" + userAccount.getString("email", null);
         RequestQueue queue = Volley.newRequestQueue(this);
@@ -75,6 +81,9 @@ public class Main extends AppCompatActivity {
                 Log.d("Stil-my-init", response.toString(2));
             } catch (JSONException e) {
                 e.printStackTrace();
+            }
+            for (int i = 0; i < 3; i++) {
+                tabs.getTabAt(i).setIcon(headerIcons.get(i));
             }
         }, error -> {
             Log.d("Stil-my-init", error.toString());
@@ -104,6 +113,9 @@ public class Main extends AppCompatActivity {
                     } else if (tabPosition == 2) {
                         TabBookmark newBookmarkTab = new TabBookmark(response);
                         adapter.updateItem(2, newBookmarkTab);
+                    }
+                    for (int i = 0; i < 3; i++) {
+                        tabs.getTabAt(i).setIcon(headerIcons.get(i));
                     }
                 }, error -> Log.d("Stil-tab-" + tabs.getSelectedTabPosition(), error.toString())));
             }
