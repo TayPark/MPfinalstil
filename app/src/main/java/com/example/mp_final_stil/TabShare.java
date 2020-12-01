@@ -36,7 +36,7 @@ import java.util.ArrayList;
 
 public class TabShare extends ListFragment {
     private ArrayList<JSONObject> items = new ArrayList<>();
-    ListViewAdapter adapter = new ListViewAdapter();
+    ListViewAdapter adapter;
     TextView titleTextView, summaryTextView, contentTextView, emailHolder, idHolder;
 
     Button bookmarkBtn;
@@ -45,7 +45,6 @@ public class TabShare extends ListFragment {
 
     public TabShare() {
         // Required empty public constructor
-        adapter.notifyDataSetChanged();
     }
 
     @Override
@@ -56,6 +55,7 @@ public class TabShare extends ListFragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        adapter = new ListViewAdapter();
 
         Context context = getContext();
         RequestQueue queue = Volley.newRequestQueue(context);
