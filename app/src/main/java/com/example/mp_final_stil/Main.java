@@ -118,9 +118,7 @@ public class Main extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (item.getItemId() == R.id.saveMenu) {
-            saveTilListener();
-        } else if (item.getItemId() == R.id.deployMenu) {
+        if (item.getItemId() == R.id.deployMenu) {
             deployTilListener();
         } else if (item.getItemId() == R.id.addTil) {
             addTilListener();
@@ -166,39 +164,6 @@ public class Main extends AppCompatActivity {
         });
         builder.setNegativeButton("Cancel", null);
         builder.show();
-    }
-
-    private void saveTilListener() {
-        PagerAdapter adapter = viewPager.getAdapter();
-        final int counts = adapter.getCount();
-        Log.d("Number-of-pager", String.valueOf(counts));
-        JSONObject requestBody = new JSONObject();
-        JSONArray contents = new JSONArray();
-
-        CheckBox eachCheckBox = null;
-        String content = null;
-        for (int i = 0; i < counts; i++) {
-//            eachCheckBox = (CheckBox) myLayout.getChildAt(i);
-//            content = eachCheckBox.getText().toString();
-//            contents.put(content);
-        }
-
-        try {
-            requestBody.put("author", userAccount.getString("email", null));
-            requestBody.put("content", contents);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        RequestQueue queue = Volley.newRequestQueue(Main.this);
-        String url = "http://15.164.96.105:8080/stil";
-        JsonObjectRequest deployRequest = new JsonObjectRequest(Request.Method.PATCH, url, requestBody, response -> {
-            Log.d("DEBUG/Main-save", response.toString());
-            Toast.makeText(Main.this, response.toString(), Toast.LENGTH_SHORT).show();
-        }, error -> {
-            Log.d("DEBUG/Main-save", error.toString());
-            Toast.makeText(Main.this, String.valueOf(error), Toast.LENGTH_SHORT).show();
-        });
     }
 
     private void deployTilListener() {

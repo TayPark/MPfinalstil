@@ -5,11 +5,6 @@
         />
 
     <item
-        android:id="@+id/saveMenu"
-        android:title="Save my TIL"
-        />
-
-    <item
         android:id="@+id/deployMenu"
         android:title="Share TIL"
         />
