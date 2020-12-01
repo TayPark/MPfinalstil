@@ -69,9 +69,4 @@ public class TabMy extends ListFragment {
 
         return super.onCreateView(inflater, container, savedInstanceState);
     }
-//
-//    @Override
-//    public void onListItemClick(@NonNull ListView l, @NonNull View v, int position, long id) {
-//
-//    }
 }

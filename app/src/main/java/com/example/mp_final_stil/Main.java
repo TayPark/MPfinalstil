@@ -38,13 +38,11 @@ import java.util.ArrayList;
 
 public class Main extends AppCompatActivity {
     private TabLayout tabs;
-    private final int NUMBER_OF_TABS = 3;
     ViewPager viewPager;
     LinearLayout myList;
     ListView shareList, bookmarkList;
     String url;
     SharedPreferences userAccount;
-    FloatingActionButton floatingButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -124,8 +122,50 @@ public class Main extends AppCompatActivity {
             saveTilListener();
         } else if (item.getItemId() == R.id.deployMenu) {
             deployTilListener();
+        } else if (item.getItemId() == R.id.addTil) {
+            addTilListener();
         }
         return true;
+    }
+
+    private void addTilListener() {
+        /* Set dialog for deployment and inflate. */
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Share TIL");
+
+        final View dialogLayout = getLayoutInflater().inflate(R.layout.add_til_dialog, null);
+        builder.setView(dialogLayout);
+
+        /* Set buttons and action here. */
+        builder.setPositiveButton("OK", (dialog, which) -> {
+            EditText tilContent = dialogLayout.findViewById(R.id.til_content);
+
+            if (tilContent.getText().toString().trim() != null) {
+                JSONObject requestBody = new JSONObject();
+                try {
+                    requestBody.put("author", userAccount.getString("email", null));
+                    requestBody.put("content", tilContent.getText().toString());
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                RequestQueue queue = Volley.newRequestQueue(Main.this);
+                String url = "http://15.164.96.105:8080/stil";
+                JsonObjectRequest deployRequest = new JsonObjectRequest(Request.Method.PATCH, url, requestBody, response -> {
+                    Log.d("DEBUG/Main-deploy", response.toString());
+                    Toast.makeText(Main.this, response.toString(), Toast.LENGTH_SHORT).show();
+                }, error -> {
+                    Log.d("DEBUG/Main-deploy", error.toString());
+                    Toast.makeText(Main.this, String.valueOf(error), Toast.LENGTH_SHORT).show();
+                });
+
+                queue.add(deployRequest);
+            } else {
+                Toast.makeText(this, "Content cannot be an empty", Toast.LENGTH_SHORT).show();
+            }
+        });
+        builder.setNegativeButton("Cancel", null);
+        builder.show();
     }
 
     private void saveTilListener() {
