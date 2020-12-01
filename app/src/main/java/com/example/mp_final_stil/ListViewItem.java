@@ -2,7 +2,7 @@ package com.example.mp_final_stil;
 
 import android.view.View;
 
-public class ListViewItem  {
+public class ListViewItem {
     private String _id;
     private String _title;
     private String _summary;
@@ -47,7 +47,9 @@ public class ListViewItem  {
         this._openness = true;
     }
 
-    public void setClose() { this._openness = false; }
+    public void setClose() {
+        this._openness = false;
+    }
 
     public String getTitle() {
         return this._title;
@@ -61,9 +63,13 @@ public class ListViewItem  {
         return this._content;
     }
 
-    public Boolean getOpenness() { return this._openness; }
+    public Boolean getOpenness() {
+        return this._openness;
+    }
 
-    public String getId() { return this._id; }
+    public String getId() {
+        return this._id;
+    }
 
     public String getAuthor() {
         return this._author;

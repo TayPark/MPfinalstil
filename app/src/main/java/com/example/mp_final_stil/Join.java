@@ -47,19 +47,19 @@ public class Join extends AppCompatActivity {
             JsonObjectRequest joinRequest = new JsonObjectRequest(
                     Request.Method.POST, url, joinAccount
                     , response -> {
-                        Log.d("join-success", response.toString());
-                        try {
-                            if (response.get("ok").toString().equals("1")) {
-                                Toast.makeText(Join.this, "Joined successfully. Please Login.", Toast.LENGTH_SHORT).show();
-                                Intent intent = new Intent(getApplicationContext(), Login.class);
-                                startActivity(intent);
-                            } else {
-                                Toast.makeText(Join.this, "Join failed", Toast.LENGTH_SHORT).show();
-                            }
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }, error -> {
+                Log.d("join-success", response.toString());
+                try {
+                    if (response.get("ok").toString().equals("1")) {
+                        Toast.makeText(Join.this, "Joined successfully. Please Login.", Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent(getApplicationContext(), Login.class);
+                        startActivity(intent);
+                    } else {
+                        Toast.makeText(Join.this, "Join failed", Toast.LENGTH_SHORT).show();
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }, error -> {
                 Log.e("join-error", error.toString());
                 if (error.toString().equals("com.android.volley.ClientError")) {
                     Toast.makeText(Join.this, "Duplicated email. Try other one", Toast.LENGTH_SHORT).show();

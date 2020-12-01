@@ -66,7 +66,7 @@ public class TabBookmark extends ListFragment {
         adapter = new ListViewAdapter();
         setListAdapter(adapter);
 
-        for(JSONObject data: items) {
+        for (JSONObject data : items) {
             try {
                 adapter.addItem(data.getString("title"),
                         data.getString("summary"),
@@ -119,7 +119,7 @@ public class TabBookmark extends ListFragment {
         adapter.notifyDataSetChanged();
     }
 
-    private View.OnClickListener contentCloser () {
+    private View.OnClickListener contentCloser() {
         return v -> {
             titleTextView.setVisibility(View.VISIBLE);
             summaryTextView.setVisibility(View.VISIBLE);

@@ -5,6 +5,7 @@ public class CheckBoxItem {
 
     /**
      * constructor
+     *
      * @param content
      */
     public CheckBoxItem(String content) {

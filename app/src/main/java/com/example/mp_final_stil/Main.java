@@ -205,6 +205,9 @@ public class Main extends AppCompatActivity {
                     /* update as real data... but why it works? */
 
                     requestBody.put("content", contentArray);
+                    for (int i = 0; i < contentArray.length(); i++) {
+                        Log.e("Items", contentArray.get(i).toString());
+                    }
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }

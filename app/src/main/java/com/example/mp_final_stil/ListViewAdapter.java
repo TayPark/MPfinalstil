@@ -16,7 +16,8 @@ public class ListViewAdapter extends BaseAdapter {
     private ArrayList<ListViewItem> listViewItemList = new ArrayList<>();
     private boolean _isOpened = false;
 
-    public ListViewAdapter() { }
+    public ListViewAdapter() {
+    }
 
     @Override
     public int getCount() {
@@ -37,9 +38,9 @@ public class ListViewAdapter extends BaseAdapter {
      * Stil-Share 탭과 Stil-Bookmark 에서 컨텐츠 뷰를 위한 메소드입니다.
      * 아래의 코드는 뷰를 불러오는 방식을 기록합니다.
      *
-     * @param position - position of contents
+     * @param position    - position of contents
      * @param convertView - Direct view
-     * @param parent - Parent view
+     * @param parent      - Parent view
      * @return View
      */
     @Override
@@ -47,7 +48,7 @@ public class ListViewAdapter extends BaseAdapter {
         Context context = parent.getContext();
 
         /* 뷰를 inflate 하기 위해 서비스와 인플레이터를 호출 함  */
-        if(convertView == null) {
+        if (convertView == null) {
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             convertView = inflater.inflate(R.layout.listview_item, parent, false);
         }

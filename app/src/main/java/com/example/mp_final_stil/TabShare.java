@@ -48,11 +48,6 @@ public class TabShare extends ListFragment {
 
     public TabShare(JSONArray response) {
         JSONObject temp;
-        try {
-            Log.d("tab-share", String.valueOf(response.get(0)));
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
         for (int i = 0; i < response.length(); i++) {
             try {
                 temp = response.getJSONObject(i);
@@ -79,7 +74,7 @@ public class TabShare extends ListFragment {
         adapter = new ListViewAdapter();
         setListAdapter(adapter);
 
-        for(JSONObject data: items) {
+        for (JSONObject data : items) {
             try {
                 adapter.addItem(data.getString("title"),
                         data.getString("summary"),
@@ -134,9 +129,10 @@ public class TabShare extends ListFragment {
 
     /**
      * Close opened content.
+     *
      * @return Button's OnClickListener that close content
      */
-    private View.OnClickListener contentCloser () {
+    private View.OnClickListener contentCloser() {
         return v -> {
             titleTextView.setVisibility(View.VISIBLE);
             summaryTextView.setVisibility(View.VISIBLE);
@@ -150,6 +146,7 @@ public class TabShare extends ListFragment {
 
     /**
      * Bookmark this STIL.
+     *
      * @return Button's OnClickListener that add bookmark for current user's email
      */
     private View.OnClickListener addBookmark() {
@@ -185,6 +182,7 @@ public class TabShare extends ListFragment {
 
     /**
      * Delete content if it is user's
+     *
      * @return
      */
     private View.OnClickListener deleteContent() {
