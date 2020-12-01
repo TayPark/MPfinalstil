@@ -1,7 +1,5 @@
 package com.example.mp_final_stil;
 
-import android.view.View;
-
 public class ListViewItem {
     private String _id;
     private String _title;

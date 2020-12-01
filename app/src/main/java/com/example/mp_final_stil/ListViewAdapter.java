@@ -14,7 +14,6 @@ import java.util.ArrayList;
 
 public class ListViewAdapter extends BaseAdapter {
     private ArrayList<ListViewItem> listViewItemList = new ArrayList<>();
-    private boolean _isOpened = false;
 
     public ListViewAdapter() {
     }
