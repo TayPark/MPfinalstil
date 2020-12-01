@@ -44,8 +44,6 @@ public class TabShare extends ListFragment {
 
     public TabShare() {
         // Required empty public constructor
-        Bundle bundle = new Bundle();
-
     }
 
     public TabShare(JSONArray response) {
@@ -96,19 +94,10 @@ public class TabShare extends ListFragment {
         return super.onCreateView(inflater, container, savedInstanceState);
     }
 
-    /**
-     * Open a content.
-     *
-     * @param l
-     * @param v
-     * @param position
-     * @param id
-     */
+    /* Content opener */
     @Override
     public void onListItemClick(@NonNull ListView l, @NonNull View v, int position, long id) {
-        /**
-         * View/Button getters
-         */
+        /* View/Button getters */
         titleTextView = v.findViewById(R.id.titleTextView);
         summaryTextView = v.findViewById(R.id.summaryTextView);
         contentTextView = v.findViewById(R.id.contentTextView);
@@ -119,9 +108,7 @@ public class TabShare extends ListFragment {
         closeBtn = v.findViewById(R.id.closeBtn);
         deleteBtn = v.findViewById(R.id.deleteBtn);
 
-        /**
-         * Open content
-         */
+        /* Open content */
         summaryTextView.setVisibility(View.GONE);
         contentTextView.setVisibility(View.VISIBLE);
 
@@ -137,9 +124,7 @@ public class TabShare extends ListFragment {
         bookmarkBtn.setBackgroundColor(Color.parseColor("#ffb347"));
         closeBtn.setBackgroundColor(Color.parseColor("#21b2de"));
 
-        /**
-         * Button click listeners
-         */
+        /* Button click listeners */
         closeBtn.setOnClickListener(contentCloser());
         bookmarkBtn.setOnClickListener(addBookmark());
         deleteBtn.setOnClickListener(deleteContent());
@@ -152,17 +137,14 @@ public class TabShare extends ListFragment {
      * @return Button's OnClickListener that close content
      */
     private View.OnClickListener contentCloser () {
-        return new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                titleTextView.setVisibility(View.VISIBLE);
-                summaryTextView.setVisibility(View.VISIBLE);
+        return v -> {
+            titleTextView.setVisibility(View.VISIBLE);
+            summaryTextView.setVisibility(View.VISIBLE);
 
-                contentTextView.setVisibility(View.GONE);
-                bookmarkBtn.setVisibility(View.GONE);
-                closeBtn.setVisibility(View.GONE);
-                deleteBtn.setVisibility(View.GONE);
-            }
+            contentTextView.setVisibility(View.GONE);
+            bookmarkBtn.setVisibility(View.GONE);
+            closeBtn.setVisibility(View.GONE);
+            deleteBtn.setVisibility(View.GONE);
         };
     }
 
@@ -191,14 +173,12 @@ public class TabShare extends ListFragment {
                 e.printStackTrace();
             }
 
-            Log.e("Share-add-bookmark", userAccount.getString("email", null) + " " + itemId);
-
             RequestQueue queue = Volley.newRequestQueue(context);
             String url = "http://15.164.96.105:8080/stil/bookmark";
             queue.add(new JsonObjectRequest(Request.Method.POST, url, requestBody, response -> {
                 Toast.makeText(context, "Bookmarked successfully", Toast.LENGTH_SHORT).show();
             }, error -> {
-                Toast.makeText(context, String.valueOf(error), Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "Already bookmarked", Toast.LENGTH_SHORT).show();
             }));
         };
     }
@@ -218,23 +198,25 @@ public class TabShare extends ListFragment {
                     break;
                 }
             }
-            String itemId = idHolder.getText().toString();
-            SharedPreferences userAccount = getActivity().getSharedPreferences("autoLogin", Context.MODE_PRIVATE);
             JSONObject requestBody = new JSONObject();
+            String itemId = idHolder.getText().toString();
             try {
-                requestBody.put("email", userAccount.getString("email", null));
                 requestBody.put("stilId", itemId);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
 
             RequestQueue queue = Volley.newRequestQueue(context);
-            String url = "http://15.164.96.105:8080/stil";
-            queue.add(new JsonObjectRequest(Request.Method.DELETE, url, requestBody, response -> {
-                Toast.makeText(context, "Bookmarked successfully", Toast.LENGTH_SHORT).show();
+
+            String url = "http://15.164.96.105:8080/stil/delete";
+            queue.add(new JsonObjectRequest(Request.Method.POST, url, requestBody, response -> {
+                Toast.makeText(context, "Deleted successfully", Toast.LENGTH_SHORT).show();
             }, error -> {
                 Toast.makeText(context, String.valueOf(error), Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "Delete failed", Toast.LENGTH_SHORT).show();
             }));
+
+            queue.start();
         };
     }
 }

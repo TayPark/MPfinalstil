@@ -83,9 +83,7 @@ public class TabBookmark extends ListFragment {
 
     @Override
     public void onListItemClick(@NonNull ListView l, @NonNull View v, int position, long id) {
-        /**
-         * View/Button getters
-         */
+        /* View/Button getters */
         titleTextView = v.findViewById(R.id.titleTextView);
         summaryTextView = v.findViewById(R.id.summaryTextView);
         contentTextView = v.findViewById(R.id.contentTextView);
@@ -94,9 +92,7 @@ public class TabBookmark extends ListFragment {
         closeBtn = v.findViewById(R.id.closeBtn);
         deleteBtn = v.findViewById(R.id.deleteBtn);
 
-        /**
-         * Open content
-         */
+        /* Open content */
         summaryTextView.setVisibility(View.GONE);
         contentTextView.setVisibility(View.VISIBLE);
 
@@ -106,47 +102,37 @@ public class TabBookmark extends ListFragment {
         deleteBtn.setBackgroundColor(Color.parseColor("#e65a1e"));
         closeBtn.setBackgroundColor(Color.parseColor("#21b2de"));
 
-        /**
-         * Button click listeners
-         */
+        /* Button click listeners */
         closeBtn.setOnClickListener(contentCloser());
         deleteBtn.setOnClickListener(deleteBookmark());
 
-        closeBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        closeBtn.setOnClickListener(view -> {
+            titleTextView.setVisibility(View.VISIBLE);
+            summaryTextView.setVisibility(View.VISIBLE);
 
-                titleTextView.setVisibility(View.VISIBLE);
-                summaryTextView.setVisibility(View.VISIBLE);
-
-                contentTextView.setVisibility(View.GONE);
-                bookmarkBtn.setVisibility(View.GONE);
-                closeBtn.setVisibility(View.GONE);
-                deleteBtn.setVisibility(View.GONE);
-            }
+            contentTextView.setVisibility(View.GONE);
+            bookmarkBtn.setVisibility(View.GONE);
+            closeBtn.setVisibility(View.GONE);
+            deleteBtn.setVisibility(View.GONE);
         });
 
         adapter.notifyDataSetChanged();
     }
 
     private View.OnClickListener contentCloser () {
-        return new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                titleTextView.setVisibility(View.VISIBLE);
-                summaryTextView.setVisibility(View.VISIBLE);
+        return v -> {
+            titleTextView.setVisibility(View.VISIBLE);
+            summaryTextView.setVisibility(View.VISIBLE);
 
-                contentTextView.setVisibility(View.GONE);
-                bookmarkBtn.setVisibility(View.GONE);
-                closeBtn.setVisibility(View.GONE);
-                deleteBtn.setVisibility(View.GONE);
-            }
+            contentTextView.setVisibility(View.GONE);
+            bookmarkBtn.setVisibility(View.GONE);
+            closeBtn.setVisibility(View.GONE);
+            deleteBtn.setVisibility(View.GONE);
         };
     }
 
     /**
-     * Delete content if it is user's
-     * @return
+     * Delete bookmark
      */
     private View.OnClickListener deleteBookmark() {
         return v -> {
@@ -169,15 +155,9 @@ public class TabBookmark extends ListFragment {
                 e.printStackTrace();
             }
 
-            try {
-                Log.e("Bookmark-delete", requestBody.getString("email") + " " + requestBody.getString("stilId"));
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-
             RequestQueue queue = Volley.newRequestQueue(context);
-            String url = "http://15.164.96.105:8080/stil/bookmark";
-            queue.add(new JsonObjectRequest(Request.Method.DELETE, url, requestBody, response -> {
+            String url = "http://15.164.96.105:8080/stil/bookmark/delete";
+            queue.add(new JsonObjectRequest(Request.Method.POST, url, requestBody, response -> {
                 Toast.makeText(context, "Bookmark released successfully", Toast.LENGTH_SHORT).show();
             }, error -> {
                 Toast.makeText(context, String.valueOf(error), Toast.LENGTH_SHORT).show();
