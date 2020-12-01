@@ -111,12 +111,56 @@ public class CheckBoxAdapter extends BaseAdapter {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         AlertDialog.Builder editDialog = new AlertDialog.Builder(context);
-                        editDialog.setTitle("Repl TIL");
+                        editDialog.setTitle("Delete TIL");
+
+                        /* 체크박스 뷰어 홀더 getter */
+                        ViewGroup viewGroup = (ViewGroup) checkBox.getParent().getParent();
 
                         editDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-//                                checkBoxItems.remove();
+                                JSONObject requestBody = new JSONObject();
+                                SharedPreferences userAccount = context.getSharedPreferences("autoLogin", Context.MODE_PRIVATE);
+
+                                try {
+                                    requestBody.put("author", userAccount.getString("email", null));
+                                    JSONArray contentArray = new JSONArray();
+                                    /* 체크박스 전체를 가져와서 업데이트 해야 함 */
+
+                                    for (int idx = 0; idx < viewGroup.getChildCount(); idx++) {
+                                        ViewGroup temp = (ViewGroup) viewGroup.getChildAt(idx);
+                                        CheckBox item = (CheckBox) temp.getChildAt(0);
+
+                                        if (!item.getText().toString().equals(checkBox.getText().toString())) {
+                                            contentArray.put(item.getText().toString());
+                                        }
+                                    }
+                                    requestBody.put("content", contentArray);
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+
+                                RequestQueue queue = Volley.newRequestQueue(context);
+                                String url = "http://15.164.96.105:8080/stil/all";
+                                JsonObjectRequest deployRequest = new JsonObjectRequest(Request.Method.PATCH, url, requestBody, response -> {
+                                    try {
+                                        if (response.getString("ok").equals("1")) {
+                                            Toast.makeText(context, "Deleted.", Toast.LENGTH_SHORT).show();
+                                        }
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+                                    Log.d("DEBUG/Main-deploy", response.toString());
+                                }, error -> {
+                                    if (error.toString().equals("com.android.volley.ClientError")) {
+                                        Toast.makeText(context, "Write TIL first", Toast.LENGTH_SHORT).show();
+                                    } else {
+                                        Toast.makeText(context, "Unexpected error: " + String.valueOf(error), Toast.LENGTH_SHORT).show();
+                                    }
+                                    Log.e("DEBUG/Main-deploy", error.toString());
+                                });
+                                queue.add(deployRequest);
+
                             }
                         });
                         editDialog.setNegativeButton("Cancel", null);
@@ -133,7 +177,6 @@ public class CheckBoxAdapter extends BaseAdapter {
 
                         /* 체크박스 뷰어 홀더 getter */
                         ViewGroup viewGroup = (ViewGroup) checkBox.getParent().getParent();
-//                        Log.e("갯수", String.valueOf(viewGroup.getChildCount()));
 
                         editDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                             @Override
@@ -146,13 +189,11 @@ public class CheckBoxAdapter extends BaseAdapter {
                                 try {
                                     requestBody.put("author", userAccount.getString("email", null));
                                     JSONArray contentArray = new JSONArray();
-                                    /**
-                                     * 체크박스 전체를 가져와서 업데이트 해야 함
-                                     */
+                                    /* 체크박스 전체를 가져와서 업데이트 */
                                     for (int idx = 0; idx < viewGroup.getChildCount(); idx++) {
                                         ViewGroup temp = (ViewGroup) viewGroup.getChildAt(idx);
                                         CheckBox item = (CheckBox) temp.getChildAt(0);
-                                        Log.e(0 + "번째", item.getText().toString());
+                                        Log.e(idx + "번째", item.getText().toString());
                                         contentArray.put(item.getText().toString());
                                     }
                                     requestBody.put("content", contentArray);
