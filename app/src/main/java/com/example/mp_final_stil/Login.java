@@ -118,7 +118,7 @@ public class Login extends AppCompatActivity {
                     if (error.toString().equals("com.android.volley.ClientError")) {
                         Toast.makeText(Login.this, "Check your ID and password", Toast.LENGTH_SHORT).show();
                     } else {
-                        Toast.makeText(Login.this, String.valueOf(error), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(Login.this, "Unexpected error: " + String.valueOf(error), Toast.LENGTH_SHORT).show();
                     }
                 }
             });

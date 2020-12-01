@@ -1,14 +1,33 @@
 package com.example.mp_final_stil;
 
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.PopupWindow;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AlertDialog;
+
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 
@@ -78,6 +97,97 @@ public class CheckBoxAdapter extends BaseAdapter {
                     checkBox.setPaintFlags(0);
                     checkBox.setBackgroundColor(Color.WHITE);
                 }
+            }
+        });
+
+        checkBox.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                AlertDialog.Builder dialog = new AlertDialog.Builder(context);
+                dialog.setTitle("Select action");
+
+                /* Set buttons and action here. */
+                dialog.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        AlertDialog.Builder editDialog = new AlertDialog.Builder(context);
+                        editDialog.setTitle("Repl TIL");
+
+                        editDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+//                                checkBoxItems.remove();
+                            }
+                        });
+                        editDialog.setNegativeButton("Cancel", null);
+                        editDialog.show();
+                    }
+                }).setNegativeButton("Edit", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        AlertDialog.Builder editDialog = new AlertDialog.Builder(context);
+                        editDialog.setTitle("Edit TIL");
+                        EditText editText = new EditText(context);
+                        editText.setText(checkBox.getText());
+                        editDialog.setView(editText);
+
+                        /* 체크박스 뷰어 홀더 getter */
+                        ViewGroup viewGroup = (ViewGroup) checkBox.getParent().getParent();
+//                        Log.e("갯수", String.valueOf(viewGroup.getChildCount()));
+
+                        editDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                checkBox.setText(editText.getText().toString());
+
+                                JSONObject requestBody = new JSONObject();
+                                SharedPreferences userAccount = context.getSharedPreferences("autoLogin", Context.MODE_PRIVATE);
+
+                                try {
+                                    requestBody.put("author", userAccount.getString("email", null));
+                                    JSONArray contentArray = new JSONArray();
+                                    /**
+                                     * 체크박스 전체를 가져와서 업데이트 해야 함
+                                     */
+                                    for (int idx = 0; idx < viewGroup.getChildCount(); idx++) {
+                                        ViewGroup temp = (ViewGroup) viewGroup.getChildAt(idx);
+                                        CheckBox item = (CheckBox) temp.getChildAt(0);
+                                        Log.e(0 + "번째", item.getText().toString());
+                                        contentArray.put(item.getText().toString());
+                                    }
+                                    requestBody.put("content", contentArray);
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+
+                                RequestQueue queue = Volley.newRequestQueue(context);
+                                String url = "http://15.164.96.105:8080/stil/all";
+                                JsonObjectRequest deployRequest = new JsonObjectRequest(Request.Method.PATCH, url, requestBody, response -> {
+                                    try {
+                                        if (response.getString("ok").equals("1")) {
+                                            Toast.makeText(context, "Edited.", Toast.LENGTH_SHORT).show();
+                                        }
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+                                    Log.d("DEBUG/Main-deploy", response.toString());
+                                }, error -> {
+                                    if (error.toString().equals("com.android.volley.ClientError")) {
+                                        Toast.makeText(context, "Write TIL first", Toast.LENGTH_SHORT).show();
+                                    } else {
+                                        Toast.makeText(context, "Unexpected error: " + String.valueOf(error), Toast.LENGTH_SHORT).show();
+                                    }
+                                    Log.e("DEBUG/Main-deploy", error.toString());
+                                });
+                                queue.add(deployRequest);
+                            }
+                        });
+                        editDialog.setNegativeButton("Cancel", null);
+                        editDialog.show();
+                    }
+                });
+                dialog.show();
+                return true;
             }
         });
 

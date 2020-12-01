@@ -163,7 +163,14 @@ public class Main extends AppCompatActivity {
                 String url = "http://15.164.96.105:8080/stil";
                 JsonObjectRequest deployRequest = new JsonObjectRequest(Request.Method.PATCH, url, requestBody, response -> {
                     Log.d("DEBUG/Main-deploy", response.toString());
-                    Toast.makeText(Main.this, response.toString(), Toast.LENGTH_SHORT).show();
+                    try {
+                        if (response.getString("ok").equals("1")) {
+                            Toast.makeText(Main.this, "Your TIL is added!", Toast.LENGTH_SHORT).show();
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    Log.d("My-til-add", response.toString());
                 }, error -> {
                     Log.d("DEBUG/Main-deploy", error.toString());
                     Toast.makeText(Main.this, String.valueOf(error), Toast.LENGTH_SHORT).show();
@@ -191,17 +198,17 @@ public class Main extends AppCompatActivity {
             EditText title = dialogLayout.findViewById(R.id.userTitle);
             EditText summary = dialogLayout.findViewById(R.id.userSummary);
 
-            if (title.getText().toString() != null && summary.getText().toString() != null) {
+            if (title.getText().toString().trim() != null && summary.getText().toString().trim() != null) {
                 JSONObject requestBody = new JSONObject();
                 try {
                     requestBody.put("title", title.getText().toString());
                     requestBody.put("summary", summary.getText().toString());
+                    requestBody.put("author", userAccount.getString("email", null));
                     JSONArray contentArray = new JSONArray();
                     contentArray.put("hello1");
                     contentArray.put("hello2");
-                    requestBody.put("content", contentArray);
 
-                    requestBody.put("author", userAccount.getString("email", null));
+                    requestBody.put("content", contentArray);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -209,13 +216,22 @@ public class Main extends AppCompatActivity {
                 RequestQueue queue = Volley.newRequestQueue(Main.this);
                 String url = "http://15.164.96.105:8080/stil";
                 JsonObjectRequest deployRequest = new JsonObjectRequest(Request.Method.POST, url, requestBody, response -> {
+                    try {
+                        if (response.getString("ok").equals("1")) {
+                            Toast.makeText(Main.this, "Your TIL is deployed!", Toast.LENGTH_SHORT).show();
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
                     Log.d("DEBUG/Main-deploy", response.toString());
-                    Toast.makeText(Main.this, response.toString(), Toast.LENGTH_SHORT).show();
                 }, error -> {
-                    Log.d("DEBUG/Main-deploy", error.toString());
-                    Toast.makeText(Main.this, String.valueOf(error), Toast.LENGTH_SHORT).show();
+                    if (error.toString().equals("com.android.volley.ClientError")) {
+                        Toast.makeText(Main.this, "Write TIL first", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(Main.this, "Unexpected error: " + String.valueOf(error), Toast.LENGTH_SHORT).show();
+                    }
+                    Log.e("DEBUG/Main-deploy", error.toString());
                 });
-
                 queue.add(deployRequest);
             } else {
                 Toast.makeText(this, "Title and summary cannot be empty", Toast.LENGTH_SHORT).show();

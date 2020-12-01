@@ -33,9 +33,6 @@ class ViewpagerAdapter extends FragmentStatePagerAdapter {
         fragList.add(new TabMy());
         fragList.add(new TabShare());
         fragList.add(new TabBookmark());
-//        titles.add("My");
-//        titles.add("Share");
-//        titles.add("Bookmark");
     }
 
     @Override
@@ -76,10 +73,4 @@ class ViewpagerAdapter extends FragmentStatePagerAdapter {
         fragList.set(position, frag);
         this.notifyDataSetChanged();
     }
-
-//    @Nullable
-//    @Override
-//    public CharSequence getPageTitle(int position) {
-//        return titles.get(position);
-//    }
 }
