@@ -87,24 +87,24 @@ public class Main extends AppCompatActivity {
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabs) {
             @Override
             public void onPageSelected(int position) {
-                int tabPosition = position;
-                if (tabPosition == 0) {
+                if (position == 0) {
                     url = "http://15.164.96.105:8080/stil?type=my&email=" + userAccount.getString("email", null);
-                } else if (tabPosition == 1) {
+                } else if (position == 1) {
                     url = "http://15.164.96.105:8080/stil?type=share";
-                } else if (tabPosition == 2) {
+                } else if (position == 2) {
                     url = "http://15.164.96.105:8080/stil?type=bookmark&email=" + userAccount.getString("email", null);
                 } else {
                     Toast.makeText(Main.this, "Wrong access on tab: " + tabs.getSelectedTabPosition(), Toast.LENGTH_SHORT).show();
                 }
+
                 queue.add(new JsonArrayRequest(Request.Method.GET, url, null, response -> {
-                    if (tabPosition == 0) {
+                    if (position == 0) {
                         TabMy newMyTab = new TabMy(response);
                         adapter.updateItem(0, newMyTab);
-                    } else if (tabPosition == 1) {
+                    } else if (position == 1) {
                         TabShare newShareTab = new TabShare(response);
                         adapter.updateItem(1, newShareTab);
-                    } else if (tabPosition == 2) {
+                    } else if (position == 2) {
                         TabBookmark newBookmarkTab = new TabBookmark(response);
                         adapter.updateItem(2, newBookmarkTab);
                     }
@@ -144,7 +144,7 @@ public class Main extends AppCompatActivity {
         builder.setPositiveButton("OK", (dialog, which) -> {
             EditText tilContent = dialogLayout.findViewById(R.id.til_content);
 
-            if (tilContent.getText().toString().trim() != null) {
+            if (!tilContent.getText().toString().trim().equals("")) {
                 JSONObject requestBody = new JSONObject();
                 try {
                     requestBody.put("author", userAccount.getString("email", null));
@@ -192,20 +192,12 @@ public class Main extends AppCompatActivity {
             EditText title = dialogLayout.findViewById(R.id.userTitle);
             EditText summary = dialogLayout.findViewById(R.id.userSummary);
 
-            if (title.getText().toString().trim() != null && summary.getText().toString().trim() != null) {
+            if (!(title.getText().toString().trim()).equals("") && !(summary.getText().toString().trim()).equals("")) {
                 JSONObject requestBody = new JSONObject();
                 try {
                     requestBody.put("title", title.getText().toString());
                     requestBody.put("summary", summary.getText().toString());
                     requestBody.put("author", userAccount.getString("email", null));
-                    JSONArray contentArray = new JSONArray();
-
-                    /* update as real data... but why it works? */
-
-                    requestBody.put("content", contentArray);
-                    for (int i = 0; i < contentArray.length(); i++) {
-                        Log.e("Items", contentArray.get(i).toString());
-                    }
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -225,7 +217,7 @@ public class Main extends AppCompatActivity {
                     if (error.toString().equals("com.android.volley.ClientError")) {
                         Toast.makeText(Main.this, "Write TIL first", Toast.LENGTH_SHORT).show();
                     } else {
-                        Toast.makeText(Main.this, "Unexpected error: " + String.valueOf(error), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(Main.this, "Unexpected error: " + error, Toast.LENGTH_SHORT).show();
                     }
                     Log.e("DEBUG/Main-deploy", error.toString());
                 });
