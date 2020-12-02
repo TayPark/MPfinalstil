@@ -55,9 +55,4 @@ class ViewpagerAdapter extends FragmentStatePagerAdapter {
     public void destroyItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
         super.destroyItem(container, position, object);
     }
-
-    public void updateItem(int position, Fragment frag) {
-        fragList.set(position, frag);
-        this.notifyDataSetChanged();
-    }
 }

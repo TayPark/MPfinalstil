@@ -8,14 +8,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.ListFragment;
 import androidx.viewpager.widget.ViewPager;
 
 import com.android.volley.Request;
@@ -25,7 +22,6 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.android.material.tabs.TabLayout;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -43,7 +39,7 @@ public class Main extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.stil_main);
+        setContentView(R.layout.main);
 
         userAccount = getSharedPreferences("autoLogin", Activity.MODE_PRIVATE);
 
@@ -146,7 +142,7 @@ public class Main extends AppCompatActivity {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Add TIL");
 
-        final View dialogLayout = getLayoutInflater().inflate(R.layout.add_til_dialog, null);
+        final View dialogLayout = getLayoutInflater().inflate(R.layout.dialog_add_til, null);
         builder.setView(dialogLayout);
 
         /* Set buttons and action here. */
@@ -194,7 +190,7 @@ public class Main extends AppCompatActivity {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Share TIL");
 
-        final View dialogLayout = getLayoutInflater().inflate(R.layout.deploy_dialog, null);
+        final View dialogLayout = getLayoutInflater().inflate(R.layout.dialog_deploy, null);
         builder.setView(dialogLayout);
 
         /* Set buttons and action here. */

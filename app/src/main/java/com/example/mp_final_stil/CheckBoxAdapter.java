@@ -34,18 +34,6 @@ public class CheckBoxAdapter extends BaseAdapter {
     public CheckBoxAdapter() {
     }
 
-    /**
-     * Constructor for recall
-     *
-     * @param items - Items to be made for tab
-     */
-    public CheckBoxAdapter(ArrayList<String> items) {
-        for (String each : items) {
-            CheckBoxItem tempCheckBox = new CheckBoxItem(each);
-            checkBoxItems.add(tempCheckBox);
-        }
-    }
-
     @Override
     public int getCount() {
         return checkBoxItems.size();
@@ -61,6 +49,7 @@ public class CheckBoxAdapter extends BaseAdapter {
         return position;
     }
 
+    /* 뷰가 렌더링 될 때 호출되는 코드 */
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         Context context = parent.getContext();
@@ -71,7 +60,6 @@ public class CheckBoxAdapter extends BaseAdapter {
             convertView = inflater.inflate(R.layout.checkbox_item, parent, false);
         }
 
-        /* Get data and set */
         CheckBox checkBox = convertView.findViewById(R.id.checkBox);
         CheckBoxItem checkBoxItem = checkBoxItems.get(position);
         checkBox.setText(checkBoxItem.getContent());
@@ -95,7 +83,7 @@ public class CheckBoxAdapter extends BaseAdapter {
                 AlertDialog.Builder dialog = new AlertDialog.Builder(context);
                 dialog.setTitle("Select action");
 
-                /* On Delete action */
+                /* 삭제 이벤트리스너 */
                 dialog.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -114,14 +102,16 @@ public class CheckBoxAdapter extends BaseAdapter {
                                 try {
                                     requestBody.put("author", userAccount.getString("email", null));
                                     JSONArray contentArray = new JSONArray();
-                                    /* 체크박스 전체를 가져와서 업데이트 해야 함 */
+                                    ViewGroup tempViewGroup;
+                                    CheckBox eachItem;
 
+                                    /* 삭제할 체크박스 외에 데이터를 request body에 주입 */
                                     for (int idx = 0; idx < viewGroup.getChildCount(); idx++) {
-                                        ViewGroup temp = (ViewGroup) viewGroup.getChildAt(idx);
-                                        CheckBox item = (CheckBox) temp.getChildAt(0);
+                                        tempViewGroup = (ViewGroup) viewGroup.getChildAt(idx);
+                                        eachItem = (CheckBox) tempViewGroup.getChildAt(0);
 
-                                        if (!item.getText().toString().equals(checkBox.getText().toString())) {
-                                            contentArray.put(item.getText().toString());
+                                        if (!eachItem.getText().toString().equals(checkBox.getText().toString())) {
+                                            contentArray.put(eachItem.getText().toString());
                                         }
                                     }
                                     requestBody.put("content", contentArray);
@@ -129,6 +119,7 @@ public class CheckBoxAdapter extends BaseAdapter {
                                     e.printStackTrace();
                                 }
 
+                                /* 데이터 수정 요청 */
                                 RequestQueue queue = Volley.newRequestQueue(context);
                                 String url = "http://15.164.96.105:8080/stil/all";
                                 JsonObjectRequest deployRequest = new JsonObjectRequest(Request.Method.PATCH, url, requestBody, response -> {
@@ -145,7 +136,6 @@ public class CheckBoxAdapter extends BaseAdapter {
                                     Log.e("DEBUG/Main-deploy", error.toString());
                                 });
                                 queue.add(deployRequest);
-
                             }
                         });
                         editDialog.setNegativeButton("Cancel", null);
@@ -175,18 +165,17 @@ public class CheckBoxAdapter extends BaseAdapter {
                                 try {
                                     requestBody.put("author", userAccount.getString("email", null));
                                     JSONArray contentArray = new JSONArray();
-                                    /* 체크박스 전체를 가져와서 업데이트 */
+                                    /* 변경값을 포함한 체크박스 전체를 가져와서 업데이트 */
                                     for (int idx = 0; idx < viewGroup.getChildCount(); idx++) {
                                         ViewGroup temp = (ViewGroup) viewGroup.getChildAt(idx);
                                         CheckBox item = (CheckBox) temp.getChildAt(0);
-                                        Log.e(idx + "번째", item.getText().toString());
                                         contentArray.put(item.getText().toString());
                                     }
                                     requestBody.put("content", contentArray);
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 }
-
+                                /* 수정 요청 */
                                 RequestQueue queue = Volley.newRequestQueue(context);
                                 String url = "http://15.164.96.105:8080/stil/all";
                                 JsonObjectRequest deployRequest = new JsonObjectRequest(Request.Method.PATCH, url, requestBody, response -> {

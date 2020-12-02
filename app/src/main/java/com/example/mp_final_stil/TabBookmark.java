@@ -8,7 +8,6 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.ListFragment;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,7 +31,7 @@ public class TabBookmark extends ListFragment {
     private ArrayList<JSONObject> items = new ArrayList<>();
     ListViewAdapter adapter = new ListViewAdapter();
     Button bookmarkBtn, closeBtn, deleteBtn;
-    TextView titleTextView, summaryTextView, contentTextView, emailHolder, idHolder;
+    TextView titleTextView, summaryTextView, contentTextView;
 
     public TabBookmark() {
         // Required empty public constructor
@@ -73,6 +72,15 @@ public class TabBookmark extends ListFragment {
         super.onCreate(savedInstanceState);
     }
 
+    /**
+     * This method called when Android render viewpager.
+     * Also it calls ListViewAdapter.getView() method.
+     *
+     * @param inflater
+     * @param container
+     * @param savedInstanceState
+     * @return
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -132,6 +140,11 @@ public class TabBookmark extends ListFragment {
         adapter.notifyDataSetChanged();
     }
 
+    /**
+     * Close opened content.
+     *
+     * @return OnClickListener to close content
+     */
     private View.OnClickListener contentCloser() {
         return v -> {
             titleTextView.setVisibility(View.VISIBLE);
@@ -145,7 +158,9 @@ public class TabBookmark extends ListFragment {
     }
 
     /**
-     * Delete bookmark
+     * Delete content if it is user's
+     *
+     * @return OnClickListener to delete content
      */
     private View.OnClickListener deleteBookmark() {
         return v -> {

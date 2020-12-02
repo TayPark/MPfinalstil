@@ -1,18 +1,14 @@
 package com.example.mp_final_stil;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 
@@ -38,13 +34,12 @@ public class ListViewAdapter extends BaseAdapter {
     }
 
     /**
-     * Stil-Share 탭과 Stil-Bookmark 에서 컨텐츠 뷰를 위한 메소드입니다.
-     * 아래의 코드는 뷰를 불러오는 방식을 기록합니다.
+     * 뷰가 렌더링 될 때 각 아이템을 렌더링하는 메소드입니다.
      *
-     * @param position    - position of contents
-     * @param convertView - Direct view
-     * @param parent      - Parent view
-     * @return View
+     * @param position    - 부모 뷰에서의 위치
+     * @param convertView - 만들어질 아이템 뷰
+     * @param parent      - 부모 뷰
+     * @return
      */
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {

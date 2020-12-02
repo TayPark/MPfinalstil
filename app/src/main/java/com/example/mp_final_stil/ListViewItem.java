@@ -8,6 +8,15 @@ public class ListViewItem {
     private String _author;
     private boolean _openness;
 
+    /**
+     * 아이템을 추가하기위한 생성자입니다.
+     *
+     * @param title   - 제목
+     * @param summary - 요약
+     * @param content - 내용
+     * @param author  - 작성자
+     * @param id      - 컨텐츠 아이디
+     */
     public ListViewItem(String title, String summary, String content, String author, String id) {
         this._title = title;
         this._summary = summary;

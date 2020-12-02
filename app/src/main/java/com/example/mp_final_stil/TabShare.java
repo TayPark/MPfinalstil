@@ -75,6 +75,15 @@ public class TabShare extends ListFragment {
         super.onCreate(savedInstanceState);
     }
 
+    /**
+     * This method called when Android render viewpager.
+     * Also it calls ListViewAdapter.getView() method.
+     *
+     * @param inflater
+     * @param container
+     * @param savedInstanceState
+     * @return
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -137,7 +146,7 @@ public class TabShare extends ListFragment {
     /**
      * Close opened content.
      *
-     * @return Button's OnClickListener that close content
+     * @return OnClickListener to close content
      */
     private View.OnClickListener contentCloser() {
         return v -> {
@@ -154,7 +163,7 @@ public class TabShare extends ListFragment {
     /**
      * Bookmark this STIL.
      *
-     * @return Button's OnClickListener that add bookmark for current user's email
+     * @return OnClickListener to add bookmark
      */
     private View.OnClickListener addBookmark() {
         return v -> {
@@ -190,7 +199,7 @@ public class TabShare extends ListFragment {
     /**
      * Delete content if it is user's
      *
-     * @return
+     * @return OnClickListener to delete bookmark
      */
     private View.OnClickListener deleteContent() {
         return v -> {
