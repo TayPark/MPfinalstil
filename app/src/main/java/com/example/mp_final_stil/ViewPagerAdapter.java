@@ -7,14 +7,17 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
 
+import org.json.JSONArray;
+
 import java.util.ArrayList;
 
 class ViewpagerAdapter extends FragmentStatePagerAdapter {
-    static final int NUM_FRAGS = 3;
     private ArrayList<Fragment> fragList = new ArrayList<>();
-    public ViewpagerAdapter(@NonNull FragmentManager fm) {
+
+    /* To init fragments */
+    public ViewpagerAdapter(FragmentManager fm, JSONArray data) {
         super(fm);
-        fragList.add(new TabMy());
+        fragList.add(new TabMy(data));
         fragList.add(new TabShare());
         fragList.add(new TabBookmark());
     }
@@ -40,7 +43,7 @@ class ViewpagerAdapter extends FragmentStatePagerAdapter {
     @Override
     public int getCount()
     {
-        return this.NUM_FRAGS;
+        return fragList.size();
     }
 
     @Override

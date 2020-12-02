@@ -29,7 +29,7 @@ import java.util.ArrayList;
 
 public class TabShare extends ListFragment {
     private ArrayList<JSONObject> items = new ArrayList<>();
-    ListViewAdapter adapter;
+    ListViewAdapter adapter = new ListViewAdapter();
     TextView titleTextView, summaryTextView, contentTextView, emailHolder, idHolder;
 
     Button bookmarkBtn;
@@ -57,6 +57,19 @@ public class TabShare extends ListFragment {
         return fragment;
     }
 
+    public void updateItem(JSONArray data) {
+        this.items.clear();
+        JSONObject temp;
+        for (int i = 0; i < data.length(); i++) {
+            try {
+                temp = data.getJSONObject(i);
+                this.items.add(temp);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,7 +79,6 @@ public class TabShare extends ListFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         adapter = new ListViewAdapter();
-        setListAdapter(adapter);
 
         for (JSONObject data : items) {
             try {
@@ -80,6 +92,7 @@ public class TabShare extends ListFragment {
             }
         }
 
+        setListAdapter(this.adapter);
         return super.onCreateView(inflater, container, savedInstanceState);
     }
 

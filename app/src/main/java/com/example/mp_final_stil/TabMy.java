@@ -12,6 +12,7 @@ import android.widget.CheckBox;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 
@@ -27,6 +28,17 @@ public class TabMy extends ListFragment {
         try {
             for (int i = 0; i < items.length(); i++) {
                 this._items.add(items.get(i).toString());
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void updateItem(JSONArray data) {
+        this._items.clear();
+        try {
+            for (int i = 0; i < data.length(); i++) {
+                this._items.add(data.get(i).toString());
             }
         } catch (JSONException e) {
             e.printStackTrace();

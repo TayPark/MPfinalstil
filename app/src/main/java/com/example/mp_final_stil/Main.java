@@ -15,6 +15,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.ListFragment;
 import androidx.viewpager.widget.ViewPager;
 
 import com.android.volley.Request;
@@ -33,10 +34,9 @@ import java.util.ArrayList;
 public class Main extends AppCompatActivity {
     private TabLayout tabs;
     ViewPager viewPager;
-    LinearLayout myList;
-    ListView shareList, bookmarkList;
     String url;
     SharedPreferences userAccount;
+    ViewpagerAdapter viewpagerAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,16 +47,6 @@ public class Main extends AppCompatActivity {
 
         tabs = findViewById(R.id.tabs);
         viewPager = findViewById(R.id.view_pager);
-
-        // set adapter on viewpager
-        ViewpagerAdapter adapter = new ViewpagerAdapter(getSupportFragmentManager());
-        viewPager.setAdapter(adapter);
-        tabs.setupWithViewPager(viewPager);
-
-        // lists by tab
-        myList = findViewById(R.id.myTabLayout);
-        shareList = findViewById(R.id.shareList);
-        bookmarkList = findViewById(R.id.bookmarkList);
 
         /* Set icons */
         ArrayList<Integer> headerIcons = new ArrayList<>();
@@ -69,13 +59,11 @@ public class Main extends AppCompatActivity {
         RequestQueue queue = Volley.newRequestQueue(this);
 
         queue.add(new JsonArrayRequest(Request.Method.GET, url, null, response -> {
-            try {
-                TabMy newerMyTab = new TabMy(response);
-                adapter.updateItem(0, newerMyTab);
-                Log.d("Stil-my-init", response.toString(2));
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
+            // Set adapter on viewpager to initiate.
+            viewpagerAdapter = new ViewpagerAdapter(getSupportFragmentManager(), response);
+            viewPager.setAdapter(viewpagerAdapter);
+            tabs.setupWithViewPager(viewPager);
+
             for (int i = 0; i < 3; i++) {
                 tabs.getTabAt(i).setIcon(headerIcons.get(i));
             }
@@ -99,15 +87,19 @@ public class Main extends AppCompatActivity {
 
                 queue.add(new JsonArrayRequest(Request.Method.GET, url, null, response -> {
                     if (position == 0) {
-                        TabMy newMyTab = new TabMy(response);
-                        adapter.updateItem(0, newMyTab);
+                        TabMy frag = (TabMy) viewpagerAdapter.getItem(position);
+                        frag.updateItem(response);
                     } else if (position == 1) {
-                        TabShare newShareTab = new TabShare(response);
-                        adapter.updateItem(1, newShareTab);
+                        TabShare frag = (TabShare) viewpagerAdapter.getItem(position);
+                        frag.updateItem(response);
                     } else if (position == 2) {
-                        TabBookmark newBookmarkTab = new TabBookmark(response);
-                        adapter.updateItem(2, newBookmarkTab);
+                        TabBookmark frag = (TabBookmark) viewpagerAdapter.getItem(position);
+                        frag.updateItem(response);
                     }
+
+                    viewpagerAdapter.notifyDataSetChanged();
+
+                    /* set icons again */
                     for (int i = 0; i < 3; i++) {
                         tabs.getTabAt(i).setIcon(headerIcons.get(i));
                     }
