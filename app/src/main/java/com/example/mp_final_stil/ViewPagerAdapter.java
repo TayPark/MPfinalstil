@@ -14,6 +14,14 @@ import java.util.ArrayList;
 class ViewpagerAdapter extends FragmentStatePagerAdapter {
     private ArrayList<Fragment> fragList = new ArrayList<>();
 
+    /* deprecated constructor */
+    public ViewpagerAdapter(FragmentManager fm) {
+        super(fm);
+        fragList.add(new TabMy());
+        fragList.add(new TabShare());
+        fragList.add(new TabBookmark());
+    }
+
     /* To init fragments */
     public ViewpagerAdapter(FragmentManager fm, JSONArray data) {
         super(fm);
