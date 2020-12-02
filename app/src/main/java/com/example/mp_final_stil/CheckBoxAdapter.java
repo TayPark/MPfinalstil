@@ -141,11 +141,7 @@ public class CheckBoxAdapter extends BaseAdapter {
                                     }
                                     Log.d("DEBUG/Main-deploy", response.toString());
                                 }, error -> {
-                                    if (error.toString().equals("com.android.volley.ClientError")) {
-                                        Toast.makeText(context, "Write TIL first", Toast.LENGTH_SHORT).show();
-                                    } else {
-                                        Toast.makeText(context, "Unexpected error: " + error, Toast.LENGTH_SHORT).show();
-                                    }
+                                    Toast.makeText(context, "Unexpected error: " + error, Toast.LENGTH_SHORT).show();
                                     Log.e("DEBUG/Main-deploy", error.toString());
                                 });
                                 queue.add(deployRequest);
@@ -203,11 +199,7 @@ public class CheckBoxAdapter extends BaseAdapter {
                                     }
                                     Log.d("DEBUG/Main-deploy", response.toString());
                                 }, error -> {
-                                    if (error.toString().equals("com.android.volley.ClientError")) {
-                                        Toast.makeText(context, "Write TIL first", Toast.LENGTH_SHORT).show();
-                                    } else {
-                                        Toast.makeText(context, "Unexpected error: " + error, Toast.LENGTH_SHORT).show();
-                                    }
+                                    Toast.makeText(context, "Unexpected error: " + error, Toast.LENGTH_SHORT).show();
                                     Log.e("DEBUG/Main-deploy", error.toString());
                                 });
                                 queue.add(deployRequest);

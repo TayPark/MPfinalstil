@@ -25,6 +25,7 @@ public class Login extends AppCompatActivity {
     Button loginBtn, joinBtn;
     EditText emailEt, passwordEt;
     String autoEmail, autoPassword;
+    SharedPreferences autoLoginPreference;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,10 +37,10 @@ public class Login extends AppCompatActivity {
         loginBtn = findViewById(R.id.loginBtn);
         joinBtn = findViewById(R.id.joinBtn);
 
-        SharedPreferences autoLogin = getSharedPreferences("autoLogin", Activity.MODE_PRIVATE);
-        SharedPreferences.Editor editor = autoLogin.edit();
-        autoEmail = autoLogin.getString("email", null);
-        autoPassword = autoLogin.getString("password", null);
+        autoLoginPreference = getSharedPreferences("autoLogin", Activity.MODE_PRIVATE);
+        SharedPreferences.Editor editor = autoLoginPreference.edit();
+        autoEmail = autoLoginPreference.getString("email", null);
+        autoPassword = autoLoginPreference.getString("password", null);
 
         JSONObject userData = new JSONObject();
         RequestQueue queue = Volley.newRequestQueue(Login.this);
@@ -75,7 +76,7 @@ public class Login extends AppCompatActivity {
                     editor.clear();
                     Toast.makeText(Login.this, "Auto login failed", Toast.LENGTH_SHORT).show();
                 } else {
-                    Toast.makeText(Login.this, "Unexpected error: " + String.valueOf(error), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(Login.this, "Unexpected error: " + error, Toast.LENGTH_SHORT).show();
                 }
             });
 
@@ -109,15 +110,12 @@ public class Login extends AppCompatActivity {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-            }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    Log.e("login-error", error.toString());
-                    if (error.toString().equals("com.android.volley.ClientError")) {
-                        Toast.makeText(Login.this, "Check your ID and password", Toast.LENGTH_SHORT).show();
-                    } else {
-                        Toast.makeText(Login.this, "Unexpected error: " + String.valueOf(error), Toast.LENGTH_SHORT).show();
-                    }
+            }, error -> {
+                Log.e("login-error", error.toString());
+                if (error.toString().equals("com.android.volley.ClientError")) {
+                    Toast.makeText(Login.this, "Check your ID and password", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(Login.this, "Unexpected error: " + error, Toast.LENGTH_SHORT).show();
                 }
             });
 
@@ -126,6 +124,9 @@ public class Login extends AppCompatActivity {
 
         /* Join process */
         joinBtn.setOnClickListener(v -> {
+            // clear SharedPreference
+            editor.clear();
+            editor.commit();
             Intent intent = new Intent(getApplicationContext(), Join.class);
             startActivity(intent);
         });

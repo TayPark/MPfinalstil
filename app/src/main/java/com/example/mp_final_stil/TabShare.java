@@ -196,6 +196,7 @@ public class TabShare extends ListFragment {
         return v -> {
             Context context = getContext();
             ViewGroup parent = (ViewGroup) v.getParent();
+
             TextView idHolder = null;
             for (int i = 0; i < parent.getChildCount(); i++) {
                 if (parent.getChildAt(i).getId() == R.id.itemId) {
@@ -215,10 +216,15 @@ public class TabShare extends ListFragment {
 
             String url = "http://15.164.96.105:8080/stil/delete";
             queue.add(new JsonObjectRequest(Request.Method.POST, url, requestBody, response -> {
-                Toast.makeText(context, "Deleted successfully", Toast.LENGTH_SHORT).show();
+                try {
+                    if (response.getString("ok").equals("1")) {
+                        Toast.makeText(context, "Deleted successfully", Toast.LENGTH_SHORT).show();
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }, error -> {
-                Toast.makeText(context, String.valueOf(error), Toast.LENGTH_SHORT).show();
-                Toast.makeText(context, "Delete failed", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "Delete failed(Already processed)", Toast.LENGTH_SHORT).show();
             }));
 
             queue.start();
