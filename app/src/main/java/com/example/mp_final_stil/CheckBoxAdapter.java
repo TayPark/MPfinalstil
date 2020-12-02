@@ -61,15 +61,6 @@ public class CheckBoxAdapter extends BaseAdapter {
         return position;
     }
 
-    /**
-     * Stil-Share 탭과 Stil-Bookmark 에서 컨텐츠 뷰를 위한 메소드입니다.
-     * 아래의 코드는 뷰를 불러오는 방식을 기록합니다.
-     *
-     * @param position    - position of contents
-     * @param convertView - Direct view
-     * @param parent      - Parent view
-     * @return View
-     */
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         Context context = parent.getContext();
@@ -104,7 +95,7 @@ public class CheckBoxAdapter extends BaseAdapter {
                 AlertDialog.Builder dialog = new AlertDialog.Builder(context);
                 dialog.setTitle("Select action");
 
-                /* Set buttons and action here. */
+                /* On Delete action */
                 dialog.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -153,7 +144,7 @@ public class CheckBoxAdapter extends BaseAdapter {
                                     if (error.toString().equals("com.android.volley.ClientError")) {
                                         Toast.makeText(context, "Write TIL first", Toast.LENGTH_SHORT).show();
                                     } else {
-                                        Toast.makeText(context, "Unexpected error: " + String.valueOf(error), Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(context, "Unexpected error: " + error, Toast.LENGTH_SHORT).show();
                                     }
                                     Log.e("DEBUG/Main-deploy", error.toString());
                                 });
@@ -164,6 +155,7 @@ public class CheckBoxAdapter extends BaseAdapter {
                         editDialog.setNegativeButton("Cancel", null);
                         editDialog.show();
                     }
+                    /* On Edit action */
                 }).setNegativeButton("Edit", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -214,7 +206,7 @@ public class CheckBoxAdapter extends BaseAdapter {
                                     if (error.toString().equals("com.android.volley.ClientError")) {
                                         Toast.makeText(context, "Write TIL first", Toast.LENGTH_SHORT).show();
                                     } else {
-                                        Toast.makeText(context, "Unexpected error: " + String.valueOf(error), Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(context, "Unexpected error: " + error, Toast.LENGTH_SHORT).show();
                                     }
                                     Log.e("DEBUG/Main-deploy", error.toString());
                                 });

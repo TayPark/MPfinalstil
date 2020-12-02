@@ -37,6 +37,8 @@ public class Main extends AppCompatActivity {
     String url;
     SharedPreferences userAccount;
     ViewpagerAdapter viewpagerAdapter;
+    RequestQueue queue;
+    ArrayList<Integer> headerIcons;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,15 +51,14 @@ public class Main extends AppCompatActivity {
         viewPager = findViewById(R.id.view_pager);
 
         /* Set icons */
-        ArrayList<Integer> headerIcons = new ArrayList<>();
+        headerIcons = new ArrayList<>();
         headerIcons.add(R.drawable.my_on);
         headerIcons.add(R.drawable.stil_on);
         headerIcons.add(R.drawable.bookmark_on);
 
         /* Initial fetch from server (my tab) */
         url = "http://15.164.96.105:8080/stil?type=my&email=" + userAccount.getString("email", null);
-        RequestQueue queue = Volley.newRequestQueue(this);
-
+        queue = Volley.newRequestQueue(this);
         queue.add(new JsonArrayRequest(Request.Method.GET, url, null, response -> {
             // Set adapter on viewpager to initiate.
             viewpagerAdapter = new ViewpagerAdapter(getSupportFragmentManager(), response);
@@ -124,6 +125,22 @@ public class Main extends AppCompatActivity {
         return true;
     }
 
+    public void updateMyTab() {
+        queue.add(new JsonArrayRequest(Request.Method.GET, url, null, response -> {
+            // Set adapter on viewpager to initiate.
+            viewpagerAdapter = new ViewpagerAdapter(getSupportFragmentManager(), response);
+            viewPager.setAdapter(viewpagerAdapter);
+            tabs.setupWithViewPager(viewPager);
+
+            for (int i = 0; i < 3; i++) {
+                tabs.getTabAt(i).setIcon(headerIcons.get(i));
+            }
+        }, error -> {
+            Log.d("Stil-my-init", error.toString());
+            Toast.makeText(Main.this, error.toString(), Toast.LENGTH_SHORT).show();
+        }));
+    }
+
     private void addTilListener() {
         /* Set dialog for deployment and inflate. */
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -151,6 +168,7 @@ public class Main extends AppCompatActivity {
                     Log.d("DEBUG/Main-deploy", response.toString());
                     try {
                         if (response.getString("ok").equals("1")) {
+                            this.updateMyTab();
                             Toast.makeText(Main.this, "Your TIL is added!", Toast.LENGTH_SHORT).show();
                         }
                     } catch (JSONException e) {
@@ -199,6 +217,7 @@ public class Main extends AppCompatActivity {
                 JsonObjectRequest deployRequest = new JsonObjectRequest(Request.Method.POST, url, requestBody, response -> {
                     try {
                         if (response.getString("ok").equals("1")) {
+                            this.updateMyTab();
                             Toast.makeText(Main.this, "Your TIL is deployed!", Toast.LENGTH_SHORT).show();
                         }
                     } catch (JSONException e) {
