@@ -8,6 +8,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.ListFragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -54,8 +55,10 @@ public class TabBookmark extends ListFragment {
         JSONObject temp;
         for (int i = 0; i < data.length(); i++) {
             try {
-                temp = data.getJSONObject(i);
-                this.items.add(temp);
+                if (data.getJSONObject(i) != null) {
+                    temp = data.getJSONObject(i);
+                    this.items.add(temp);
+                }
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -186,9 +189,21 @@ public class TabBookmark extends ListFragment {
             RequestQueue queue = Volley.newRequestQueue(context);
             String url = "http://15.164.96.105:8080/stil/bookmark/delete";
             queue.add(new JsonObjectRequest(Request.Method.POST, url, requestBody, response -> {
-                Toast.makeText(context, "Bookmark released successfully", Toast.LENGTH_SHORT).show();
+                try {
+                    if (response.getString("ok").equals("1")) {
+                        JSONArray dataFromServer = response.getJSONArray("data");
+                        ((TabBookmark) Main.viewpagerAdapter.getItem(2)).updateItem(dataFromServer);
+                        Main.viewpagerAdapter.notifyDataSetChanged();
+                        Main.setIcons();
+                        Toast.makeText(context, "Bookmark released successfully", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(context, "Something goes wrong", Toast.LENGTH_SHORT).show();
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }, error -> {
-                Toast.makeText(context, String.valueOf(error), Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "Already processed", Toast.LENGTH_SHORT).show();
             }));
         };
     }

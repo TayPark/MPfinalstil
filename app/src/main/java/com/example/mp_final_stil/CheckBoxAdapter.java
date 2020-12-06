@@ -49,6 +49,24 @@ public class CheckBoxAdapter extends BaseAdapter {
         return position;
     }
 
+    public void addItem(String content) {
+        CheckBoxItem item = new CheckBoxItem(content);
+
+        checkBoxItems.add(item);
+    }
+
+    private void updateItem(JSONArray data) {
+        this.checkBoxItems.clear();
+
+        for (int i = 0; i < data.length(); i++) {
+            try {
+                checkBoxItems.add(new CheckBoxItem(data.get(i).toString()));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     /* 뷰가 렌더링 될 때 호출되는 코드 */
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
@@ -64,16 +82,13 @@ public class CheckBoxAdapter extends BaseAdapter {
         CheckBoxItem checkBoxItem = checkBoxItems.get(position);
         checkBox.setText(checkBoxItem.getContent());
 
-        checkBox.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (checkBox.isChecked()) {
-                    checkBox.setPaintFlags(Paint.STRIKE_THRU_TEXT_FLAG);
-                    checkBox.setBackgroundColor(Color.parseColor("#c4c4c4"));
-                } else {
-                    checkBox.setPaintFlags(0);
-                    checkBox.setBackgroundColor(Color.WHITE);
-                }
+        checkBox.setOnClickListener(v -> {
+            if (checkBox.isChecked()) {
+                checkBox.setPaintFlags(Paint.STRIKE_THRU_TEXT_FLAG);
+                checkBox.setBackgroundColor(Color.parseColor("#c4c4c4"));
+            } else {
+                checkBox.setPaintFlags(0);
+                checkBox.setBackgroundColor(Color.WHITE);
             }
         });
 
@@ -87,13 +102,13 @@ public class CheckBoxAdapter extends BaseAdapter {
                 dialog.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        AlertDialog.Builder editDialog = new AlertDialog.Builder(context);
-                        editDialog.setTitle("Delete TIL");
+                        AlertDialog.Builder deleteDialog = new AlertDialog.Builder(context);
+                        deleteDialog.setTitle("Delete TIL");
 
                         /* 체크박스 뷰어 홀더 getter */
                         ViewGroup viewGroup = (ViewGroup) checkBox.getParent().getParent();
 
-                        editDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        deleteDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 JSONObject requestBody = new JSONObject();
@@ -122,9 +137,13 @@ public class CheckBoxAdapter extends BaseAdapter {
                                 /* 데이터 수정 요청 */
                                 RequestQueue queue = Volley.newRequestQueue(context);
                                 String url = "http://15.164.96.105:8080/stil/all";
-                                JsonObjectRequest deployRequest = new JsonObjectRequest(Request.Method.PATCH, url, requestBody, response -> {
+                                JsonObjectRequest deleteRequest = new JsonObjectRequest(Request.Method.PATCH, url, requestBody, response -> {
                                     try {
                                         if (response.getString("ok").equals("1")) {
+                                            TabMy frag = (TabMy) Main.viewpagerAdapter.getItem(0);
+                                            frag.updateItem((response.getJSONObject("data")).getJSONArray("content"));
+                                            Main.viewpagerAdapter.notifyDataSetChanged();
+                                            Main.setIcons();
                                             Toast.makeText(context, "Deleted.", Toast.LENGTH_SHORT).show();
                                         }
                                     } catch (JSONException e) {
@@ -135,11 +154,11 @@ public class CheckBoxAdapter extends BaseAdapter {
                                     Toast.makeText(context, "Unexpected error: " + error, Toast.LENGTH_SHORT).show();
                                     Log.e("DEBUG/Main-deploy", error.toString());
                                 });
-                                queue.add(deployRequest);
+                                queue.add(deleteRequest);
                             }
                         });
-                        editDialog.setNegativeButton("Cancel", null);
-                        editDialog.show();
+                        deleteDialog.setNegativeButton("Cancel", null);
+                        deleteDialog.show();
                     }
                     /* On Edit action */
                 }).setNegativeButton("Edit", new DialogInterface.OnClickListener() {
@@ -181,6 +200,10 @@ public class CheckBoxAdapter extends BaseAdapter {
                                 JsonObjectRequest deployRequest = new JsonObjectRequest(Request.Method.PATCH, url, requestBody, response -> {
                                     try {
                                         if (response.getString("ok").equals("1")) {
+                                            TabMy frag = (TabMy) Main.viewpagerAdapter.getItem(0);
+                                            frag.updateItem((response.getJSONObject("data")).getJSONArray("content"));
+                                            Main.viewpagerAdapter.notifyDataSetChanged();
+                                            Main.setIcons();
                                             Toast.makeText(context, "Edited.", Toast.LENGTH_SHORT).show();
                                         }
                                     } catch (JSONException e) {
@@ -206,10 +229,5 @@ public class CheckBoxAdapter extends BaseAdapter {
         return convertView;
     }
 
-    public void addItem(String content) {
-        CheckBoxItem item = new CheckBoxItem(content);
-
-        checkBoxItems.add(item);
-    }
 
 }

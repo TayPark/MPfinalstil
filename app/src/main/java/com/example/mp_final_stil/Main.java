@@ -22,19 +22,20 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.android.material.tabs.TabLayout;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 
 public class Main extends AppCompatActivity {
-    private TabLayout tabs;
+    static TabLayout tabs;
+    static ViewpagerAdapter viewpagerAdapter;
+    static ArrayList<Integer> headerIcons;
     ViewPager viewPager;
     String url;
     SharedPreferences userAccount;
-    ViewpagerAdapter viewpagerAdapter;
     RequestQueue queue;
-    ArrayList<Integer> headerIcons;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,9 +62,7 @@ public class Main extends AppCompatActivity {
             viewPager.setAdapter(viewpagerAdapter);
             tabs.setupWithViewPager(viewPager);
 
-            for (int i = 0; i < 3; i++) {
-                tabs.getTabAt(i).setIcon(headerIcons.get(i));
-            }
+            setIcons();
         }, error -> {
             Log.d("Stil-my-init", error.toString());
             Toast.makeText(Main.this, error.toString(), Toast.LENGTH_SHORT).show();
@@ -97,12 +96,26 @@ public class Main extends AppCompatActivity {
                     viewpagerAdapter.notifyDataSetChanged();
 
                     /* set icons again */
-                    for (int i = 0; i < 3; i++) {
-                        tabs.getTabAt(i).setIcon(headerIcons.get(i));
-                    }
-                }, error -> Log.d("Stil-tab-" + tabs.getSelectedTabPosition(), error.toString())));
+                    setIcons();
+//                    for (int i = 0; i < 3; i++) {
+//                        tabs.getTabAt(i).setIcon(headerIcons.get(i));
+//                    }
+                }, error -> {
+                    Log.d("Stil-tab-" + tabs.getSelectedTabPosition(), error.toString());
+                }
+                ));
             }
         });
+    }
+
+    public static JSONArray wrapper(JSONObject jsonObj) throws JSONException {
+        return new JSONArray(jsonObj);
+    }
+
+    public static void setIcons() {
+        for (int i = 0; i < 3; i++) {
+            tabs.getTabAt(i).setIcon(headerIcons.get(i));
+        }
     }
 
     @Override
@@ -119,22 +132,6 @@ public class Main extends AppCompatActivity {
             addTilListener();
         }
         return true;
-    }
-
-    public void updateMyTab() {
-        queue.add(new JsonArrayRequest(Request.Method.GET, url, null, response -> {
-            // Set adapter on viewpager to initiate.
-            viewpagerAdapter = new ViewpagerAdapter(getSupportFragmentManager(), response);
-            viewPager.setAdapter(viewpagerAdapter);
-            tabs.setupWithViewPager(viewPager);
-
-            for (int i = 0; i < 3; i++) {
-                tabs.getTabAt(i).setIcon(headerIcons.get(i));
-            }
-        }, error -> {
-            Log.d("Stil-my-init", error.toString());
-            Toast.makeText(Main.this, error.toString(), Toast.LENGTH_SHORT).show();
-        }));
     }
 
     private void addTilListener() {
@@ -159,18 +156,21 @@ public class Main extends AppCompatActivity {
                 }
 
                 RequestQueue queue = Volley.newRequestQueue(Main.this);
+
                 String url = "http://15.164.96.105:8080/stil";
                 JsonObjectRequest deployRequest = new JsonObjectRequest(Request.Method.PATCH, url, requestBody, response -> {
-                    Log.d("DEBUG/Main-deploy", response.toString());
                     try {
-                        if (response.getString("ok").equals("1")) {
-                            this.updateMyTab();
-                            Toast.makeText(Main.this, "Your TIL is added!", Toast.LENGTH_SHORT).show();
-                        }
+                        Log.d("DEBUG/Main-add-mine", response.toString(2));
+                        JSONArray myTil = response.getJSONArray("content");
+                        TabMy frag = (TabMy) viewpagerAdapter.getItem(0);
+                        frag.updateItem(myTil);
+                        viewpagerAdapter.notifyDataSetChanged();
+                        setIcons();
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-                    Log.d("My-til-add", response.toString());
+
+                    Toast.makeText(Main.this, "Your TIL is added!", Toast.LENGTH_SHORT).show();
                 }, error -> {
                     Log.d("DEBUG/Main-deploy", error.toString());
                     Toast.makeText(Main.this, String.valueOf(error), Toast.LENGTH_SHORT).show();
@@ -209,17 +209,18 @@ public class Main extends AppCompatActivity {
                 }
 
                 RequestQueue queue = Volley.newRequestQueue(Main.this);
-                String url = "http://15.164.96.105:8080/stil";
+                String url = "http://15.164.96.105:8080/stil/deploy";
                 JsonObjectRequest deployRequest = new JsonObjectRequest(Request.Method.POST, url, requestBody, response -> {
                     try {
-                        if (response.getString("ok").equals("1")) {
-                            this.updateMyTab();
-                            Toast.makeText(Main.this, "Your TIL is deployed!", Toast.LENGTH_SHORT).show();
-                        }
+                        Log.d("DEBUG/Main-deploy", response.toString(2));
+                        TabMy frag = (TabMy) viewpagerAdapter.getItem(0);
+                        frag.updateItem(new JSONArray());
+                        viewpagerAdapter.notifyDataSetChanged();
+                        setIcons();
+                        Toast.makeText(Main.this, "Your TIL is deployed!", Toast.LENGTH_SHORT).show();
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-                    Log.d("DEBUG/Main-deploy", response.toString());
                 }, error -> {
                     if (error.toString().equals("com.android.volley.ClientError")) {
                         Toast.makeText(Main.this, "Write TIL first", Toast.LENGTH_SHORT).show();
@@ -232,8 +233,7 @@ public class Main extends AppCompatActivity {
             } else {
                 Toast.makeText(this, "Title and summary cannot be empty", Toast.LENGTH_SHORT).show();
             }
-        });
-        builder.setNegativeButton("Cancel", null);
+        }).setNegativeButton("Cancel", null);
         builder.show();
     }
 

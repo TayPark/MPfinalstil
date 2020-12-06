@@ -31,9 +31,7 @@ class ViewpagerAdapter extends FragmentStatePagerAdapter {
     }
 
     @Override
-    public void notifyDataSetChanged() {
-        super.notifyDataSetChanged();
-    }
+    public void notifyDataSetChanged() { super.notifyDataSetChanged(); }
 
     @NonNull
     @Override
