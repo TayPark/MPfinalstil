@@ -49,23 +49,28 @@ public class CheckBoxAdapter extends BaseAdapter {
         return position;
     }
 
-    public void addItem(String content) {
-        CheckBoxItem item = new CheckBoxItem(content);
+    public void addItem(JSONObject content) {
+        CheckBoxItem item = null;
+        try {
+            item = new CheckBoxItem(content.getString("content"), content.getString("_id"), content.getBoolean("checked"));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
 
         checkBoxItems.add(item);
     }
 
-    private void updateItem(JSONArray data) {
-        this.checkBoxItems.clear();
-
-        for (int i = 0; i < data.length(); i++) {
-            try {
-                checkBoxItems.add(new CheckBoxItem(data.get(i).toString()));
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-    }
+//    private void updateItem(JSONArray data) {
+//        this.checkBoxItems.clear();
+//
+//        for (int i = 0; i < data.length(); i++) {
+//            try {
+//                checkBoxItems.add(new CheckBoxItem(data.get(i)));
+//            } catch (JSONException e) {
+//                e.printStackTrace();
+//            }
+//        }
+//    }
 
     /* 뷰가 렌더링 될 때 호출되는 코드 */
     @Override
@@ -117,15 +122,18 @@ public class CheckBoxAdapter extends BaseAdapter {
                                 try {
                                     requestBody.put("author", userAccount.getString("email", null));
                                     JSONArray contentArray = new JSONArray();
-                                    ViewGroup tempViewGroup;
+                                    ViewGroup tempViewGroup = null;
                                     CheckBox eachItem;
 
                                     /* 삭제할 체크박스 외에 데이터를 request body에 주입 */
                                     for (int idx = 0; idx < viewGroup.getChildCount(); idx++) {
+                                        JSONObject obj = new JSONObject();
+
                                         tempViewGroup = (ViewGroup) viewGroup.getChildAt(idx);
                                         eachItem = (CheckBox) tempViewGroup.getChildAt(0);
 
                                         if (!eachItem.getText().toString().equals(checkBox.getText().toString())) {
+                                            obj.put("checked", eachItem.isChecked());
                                             contentArray.put(eachItem.getText().toString());
                                         }
                                     }

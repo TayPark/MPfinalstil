@@ -17,7 +17,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 public class TabMy extends ListFragment {
-    private ArrayList<String> _items = new ArrayList<>();
+    private ArrayList<JSONObject> _items = new ArrayList<>();
     CheckBoxAdapter adapter;
 
     public TabMy() {
@@ -27,7 +27,7 @@ public class TabMy extends ListFragment {
     public TabMy(JSONArray items) {
         try {
             for (int i = 0; i < items.length(); i++) {
-                this._items.add(items.get(i).toString());
+                this._items.add(items.getJSONObject(i));
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -38,7 +38,7 @@ public class TabMy extends ListFragment {
         this._items.clear();
         try {
             for (int i = 0; i < data.length(); i++) {
-                this._items.add(data.get(i).toString());
+                this._items.add(data.getJSONObject(i));
             }
         } catch (JSONException e) {
             e.printStackTrace();

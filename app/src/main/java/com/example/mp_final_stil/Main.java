@@ -82,6 +82,12 @@ public class Main extends AppCompatActivity {
                 }
 
                 queue.add(new JsonArrayRequest(Request.Method.GET, url, null, response -> {
+                    try {
+                        Log.e("response-data", response.toString(2));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
                     if (position == 0) {
                         TabMy frag = (TabMy) viewpagerAdapter.getItem(position);
                         frag.updateItem(response);
@@ -161,15 +167,18 @@ public class Main extends AppCompatActivity {
                 JsonObjectRequest deployRequest = new JsonObjectRequest(Request.Method.PATCH, url, requestBody, response -> {
                     try {
                         Log.d("DEBUG/Main-add-mine", response.toString(2));
-                        JSONArray myTil = response.getJSONArray("content");
-                        TabMy frag = (TabMy) viewpagerAdapter.getItem(0);
-                        frag.updateItem(myTil);
-                        viewpagerAdapter.notifyDataSetChanged();
-                        setIcons();
+                        if (response.getString("ok").equals("1")) {
+                            JSONArray myTil = response.getJSONArray("data");
+                            TabMy frag = (TabMy) viewpagerAdapter.getItem(0);
+                            frag.updateItem(myTil);
+                            viewpagerAdapter.notifyDataSetChanged();
+                            setIcons();
+                        } else {
+                            Toast.makeText(Main.this, "Server goes wrong", Toast.LENGTH_SHORT).show();
+                        }
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-
                     Toast.makeText(Main.this, "Your TIL is added!", Toast.LENGTH_SHORT).show();
                 }, error -> {
                     Log.d("DEBUG/Main-deploy", error.toString());
