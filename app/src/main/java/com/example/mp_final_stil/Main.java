@@ -83,7 +83,7 @@ public class Main extends AppCompatActivity {
 
                 queue.add(new JsonArrayRequest(Request.Method.GET, url, null, response -> {
                     try {
-                        Log.e("response-data", response.toString(2));
+                        Log.e("main-viewpager-res", response.toString(2));
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -100,12 +100,7 @@ public class Main extends AppCompatActivity {
                     }
 
                     viewpagerAdapter.notifyDataSetChanged();
-
-                    /* set icons again */
                     setIcons();
-//                    for (int i = 0; i < 3; i++) {
-//                        tabs.getTabAt(i).setIcon(headerIcons.get(i));
-//                    }
                 }, error -> {
                     Log.d("Stil-tab-" + tabs.getSelectedTabPosition(), error.toString());
                 }
@@ -164,7 +159,7 @@ public class Main extends AppCompatActivity {
                 RequestQueue queue = Volley.newRequestQueue(Main.this);
 
                 String url = "http://15.164.96.105:8080/stil";
-                JsonObjectRequest deployRequest = new JsonObjectRequest(Request.Method.PATCH, url, requestBody, response -> {
+                JsonObjectRequest deployRequest = new JsonObjectRequest(Request.Method.POST, url, requestBody, response -> {
                     try {
                         Log.d("DEBUG/Main-add-mine", response.toString(2));
                         if (response.getString("ok").equals("1")) {

@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
@@ -60,18 +61,6 @@ public class CheckBoxAdapter extends BaseAdapter {
         checkBoxItems.add(item);
     }
 
-//    private void updateItem(JSONArray data) {
-//        this.checkBoxItems.clear();
-//
-//        for (int i = 0; i < data.length(); i++) {
-//            try {
-//                checkBoxItems.add(new CheckBoxItem(data.get(i)));
-//            } catch (JSONException e) {
-//                e.printStackTrace();
-//            }
-//        }
-//    }
-
     /* 뷰가 렌더링 될 때 호출되는 코드 */
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
@@ -86,14 +75,83 @@ public class CheckBoxAdapter extends BaseAdapter {
         CheckBox checkBox = convertView.findViewById(R.id.checkBox);
         CheckBoxItem checkBoxItem = checkBoxItems.get(position);
         checkBox.setText(checkBoxItem.getContent());
+        if (checkBoxItem.isChecked()) {
+            checkBox.setChecked(true);
+            checkBox.setPaintFlags(Paint.STRIKE_THRU_TEXT_FLAG);
+            checkBox.setBackgroundColor(Color.parseColor("#c4c4c4"));
+        }
+
+        TextView idHolder = convertView.findViewById(R.id.checkBoxId);
+        idHolder.setText(checkBoxItem.getId());
 
         checkBox.setOnClickListener(v -> {
             if (checkBox.isChecked()) {
                 checkBox.setPaintFlags(Paint.STRIKE_THRU_TEXT_FLAG);
                 checkBox.setBackgroundColor(Color.parseColor("#c4c4c4"));
+
+                JSONObject requestBody = new JSONObject();
+                SharedPreferences userAccount = context.getSharedPreferences("autoLogin", Context.MODE_PRIVATE);
+
+                try {
+                    requestBody.put("author", userAccount.getString("email", null));
+                    requestBody.put("toggle", true);
+                    requestBody.put("itemId", ((TextView) ((ViewGroup) checkBox.getParent()).getChildAt(0)).getText().toString());
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                Log.d("checkBoxId", ((TextView) ((ViewGroup) checkBox.getParent()).getChildAt(0)).getText().toString());
+
+                RequestQueue queue = Volley.newRequestQueue(context);
+                String url = "http://15.164.96.105:8080/stil/check";
+                JsonObjectRequest deleteRequest = new JsonObjectRequest(Request.Method.PATCH, url, requestBody, response -> {
+                    try {
+                        if (response.getString("ok").equals("1")) {
+                            Toast.makeText(context, "Checked successfully.", Toast.LENGTH_SHORT).show();
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    Log.d("DEBUG/Main-deploy", response.toString());
+                }, error -> {
+                    Toast.makeText(context, "Unexpected error: " + error, Toast.LENGTH_SHORT).show();
+                    Log.e("DEBUG/Main-deploy", error.toString());
+                });
+                queue.add(deleteRequest);
+
             } else {
                 checkBox.setPaintFlags(0);
                 checkBox.setBackgroundColor(Color.WHITE);
+
+                JSONObject requestBody = new JSONObject();
+                SharedPreferences userAccount = context.getSharedPreferences("autoLogin", Context.MODE_PRIVATE);
+
+                try {
+                    requestBody.put("author", userAccount.getString("email", null));
+                    requestBody.put("toggle", false);
+                    requestBody.put("itemId", ((TextView) ((ViewGroup) checkBox.getParent()).getChildAt(0)).getText().toString());
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                Log.d("checkBoxId", ((TextView) ((ViewGroup) checkBox.getParent()).getChildAt(0)).getText().toString());
+
+                RequestQueue queue = Volley.newRequestQueue(context);
+                String url = "http://15.164.96.105:8080/stil/check";
+                JsonObjectRequest deleteRequest = new JsonObjectRequest(Request.Method.PATCH, url, requestBody, response -> {
+                    try {
+                        if (response.getString("ok").equals("1")) {
+                            Toast.makeText(context, "Checked successfully.", Toast.LENGTH_SHORT).show();
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    Log.d("DEBUG/Main-deploy", response.toString());
+                }, error -> {
+                    Toast.makeText(context, "Unexpected error: " + error, Toast.LENGTH_SHORT).show();
+                    Log.e("DEBUG/Main-deploy", error.toString());
+                });
+                queue.add(deleteRequest);
             }
         });
 
@@ -121,35 +179,19 @@ public class CheckBoxAdapter extends BaseAdapter {
 
                                 try {
                                     requestBody.put("author", userAccount.getString("email", null));
-                                    JSONArray contentArray = new JSONArray();
-                                    ViewGroup tempViewGroup = null;
-                                    CheckBox eachItem;
-
-                                    /* 삭제할 체크박스 외에 데이터를 request body에 주입 */
-                                    for (int idx = 0; idx < viewGroup.getChildCount(); idx++) {
-                                        JSONObject obj = new JSONObject();
-
-                                        tempViewGroup = (ViewGroup) viewGroup.getChildAt(idx);
-                                        eachItem = (CheckBox) tempViewGroup.getChildAt(0);
-
-                                        if (!eachItem.getText().toString().equals(checkBox.getText().toString())) {
-                                            obj.put("checked", eachItem.isChecked());
-                                            contentArray.put(eachItem.getText().toString());
-                                        }
-                                    }
-                                    requestBody.put("content", contentArray);
+                                    requestBody.put("itemId", ((TextView) ((ViewGroup) checkBox.getParent()).getChildAt(0)).getText().toString());
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 }
 
-                                /* 데이터 수정 요청 */
+                                /* 데이터 삭제 요청 */
                                 RequestQueue queue = Volley.newRequestQueue(context);
-                                String url = "http://15.164.96.105:8080/stil/all";
+                                String url = "http://15.164.96.105:8080/stil/pull";
                                 JsonObjectRequest deleteRequest = new JsonObjectRequest(Request.Method.PATCH, url, requestBody, response -> {
                                     try {
                                         if (response.getString("ok").equals("1")) {
                                             TabMy frag = (TabMy) Main.viewpagerAdapter.getItem(0);
-                                            frag.updateItem((response.getJSONObject("data")).getJSONArray("content"));
+                                            frag.updateItem(response.getJSONArray("data"));
                                             Main.viewpagerAdapter.notifyDataSetChanged();
                                             Main.setIcons();
                                             Toast.makeText(context, "Deleted.", Toast.LENGTH_SHORT).show();
@@ -178,9 +220,6 @@ public class CheckBoxAdapter extends BaseAdapter {
                         editText.setText(checkBox.getText());
                         editDialog.setView(editText);
 
-                        /* 체크박스 뷰어 홀더 getter */
-                        ViewGroup viewGroup = (ViewGroup) checkBox.getParent().getParent();
-
                         editDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
@@ -191,25 +230,20 @@ public class CheckBoxAdapter extends BaseAdapter {
 
                                 try {
                                     requestBody.put("author", userAccount.getString("email", null));
-                                    JSONArray contentArray = new JSONArray();
-                                    /* 변경값을 포함한 체크박스 전체를 가져와서 업데이트 */
-                                    for (int idx = 0; idx < viewGroup.getChildCount(); idx++) {
-                                        ViewGroup temp = (ViewGroup) viewGroup.getChildAt(idx);
-                                        CheckBox item = (CheckBox) temp.getChildAt(0);
-                                        contentArray.put(item.getText().toString());
-                                    }
-                                    requestBody.put("content", contentArray);
+                                    requestBody.put("itemId", ((TextView) ((ViewGroup) checkBox.getParent()).getChildAt(0)).getText().toString());
+                                    requestBody.put("content", checkBox.getText().toString());
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 }
+
                                 /* 수정 요청 */
                                 RequestQueue queue = Volley.newRequestQueue(context);
-                                String url = "http://15.164.96.105:8080/stil/all";
+                                String url = "http://15.164.96.105:8080/stil/edit";
                                 JsonObjectRequest deployRequest = new JsonObjectRequest(Request.Method.PATCH, url, requestBody, response -> {
                                     try {
                                         if (response.getString("ok").equals("1")) {
                                             TabMy frag = (TabMy) Main.viewpagerAdapter.getItem(0);
-                                            frag.updateItem((response.getJSONObject("data")).getJSONArray("content"));
+                                            frag.updateItem((response.getJSONArray("data")));
                                             Main.viewpagerAdapter.notifyDataSetChanged();
                                             Main.setIcons();
                                             Toast.makeText(context, "Edited.", Toast.LENGTH_SHORT).show();
