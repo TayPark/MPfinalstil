@@ -64,7 +64,6 @@ public class Main extends AppCompatActivity {
 
             setIcons();
         }, error -> {
-            Log.d("Stil-my-init", error.toString());
             Toast.makeText(Main.this, error.toString(), Toast.LENGTH_SHORT).show();
         }));
 
@@ -82,12 +81,6 @@ public class Main extends AppCompatActivity {
                 }
 
                 queue.add(new JsonArrayRequest(Request.Method.GET, url, null, response -> {
-                    try {
-                        Log.e("main-viewpager-res", response.toString(2));
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-
                     if (position == 0) {
                         TabMy frag = (TabMy) viewpagerAdapter.getItem(position);
                         frag.updateItem(response);
@@ -107,10 +100,6 @@ public class Main extends AppCompatActivity {
                 ));
             }
         });
-    }
-
-    public static JSONArray wrapper(JSONObject jsonObj) throws JSONException {
-        return new JSONArray(jsonObj);
     }
 
     public static void setIcons() {
@@ -157,11 +146,9 @@ public class Main extends AppCompatActivity {
                 }
 
                 RequestQueue queue = Volley.newRequestQueue(Main.this);
-
                 String url = "http://15.164.96.105:8080/stil";
-                JsonObjectRequest deployRequest = new JsonObjectRequest(Request.Method.POST, url, requestBody, response -> {
+                queue.add(new JsonObjectRequest(Request.Method.POST, url, requestBody, response -> {
                     try {
-                        Log.d("DEBUG/Main-add-mine", response.toString(2));
                         if (response.getString("ok").equals("1")) {
                             JSONArray myTil = response.getJSONArray("data");
                             TabMy frag = (TabMy) viewpagerAdapter.getItem(0);
@@ -176,11 +163,8 @@ public class Main extends AppCompatActivity {
                     }
                     Toast.makeText(Main.this, "Your TIL is added!", Toast.LENGTH_SHORT).show();
                 }, error -> {
-                    Log.d("DEBUG/Main-deploy", error.toString());
                     Toast.makeText(Main.this, String.valueOf(error), Toast.LENGTH_SHORT).show();
-                });
-
-                queue.add(deployRequest);
+                }));
             } else {
                 Toast.makeText(this, "Content cannot be an empty", Toast.LENGTH_SHORT).show();
             }
@@ -216,12 +200,13 @@ public class Main extends AppCompatActivity {
                 String url = "http://15.164.96.105:8080/stil/deploy";
                 JsonObjectRequest deployRequest = new JsonObjectRequest(Request.Method.POST, url, requestBody, response -> {
                     try {
-                        Log.d("DEBUG/Main-deploy", response.toString(2));
-                        TabMy frag = (TabMy) viewpagerAdapter.getItem(0);
-                        frag.updateItem(new JSONArray());
-                        viewpagerAdapter.notifyDataSetChanged();
-                        setIcons();
-                        Toast.makeText(Main.this, "Your TIL is deployed!", Toast.LENGTH_SHORT).show();
+                        if(response.getString("ok").equals("1")) {
+                            TabMy frag = (TabMy) viewpagerAdapter.getItem(0);
+                            frag.updateItem(new JSONArray());
+                            viewpagerAdapter.notifyDataSetChanged();
+                            setIcons();
+                            Toast.makeText(Main.this, "Your TIL is deployed!", Toast.LENGTH_SHORT).show();
+                        }
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -231,7 +216,6 @@ public class Main extends AppCompatActivity {
                     } else {
                         Toast.makeText(Main.this, "Unexpected error: " + error, Toast.LENGTH_SHORT).show();
                     }
-                    Log.e("DEBUG/Main-deploy", error.toString());
                 });
                 queue.add(deployRequest);
             } else {
