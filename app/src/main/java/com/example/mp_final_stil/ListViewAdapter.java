@@ -34,18 +34,18 @@ public class ListViewAdapter extends BaseAdapter {
     }
 
     /**
-     * 뷰가 렌더링 될 때 각 아이템을 렌더링하는 메소드입니다.
+     * Render items when user select TabShare, TabBookmark.
      *
-     * @param position    - 부모 뷰에서의 위치
-     * @param convertView - 만들어질 아이템 뷰
-     * @param parent      - 부모 뷰
+     * @param position    - Position on parent view
+     * @param convertView - Item view to be made
+     * @param parent      - Parent view group(layout)
      * @return
      */
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         Context context = parent.getContext();
 
-        /* 뷰를 inflate 하기 위해 서비스와 인플레이터를 호출 함  */
+        /* To render item onto parent view group, inflate view with inflater service in parent context */
         if (convertView == null) {
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             convertView = inflater.inflate(R.layout.listview_item, parent, false);
@@ -59,21 +59,19 @@ public class ListViewAdapter extends BaseAdapter {
 
         ListViewItem listViewItem = listViewItemList.get(position);
 
-        titleTextView.setText(listViewItem.getTitle());
-        summaryTextView.setText(listViewItem.getSummary());
-
         String contentForEndUser = "";
-
         try {
             JSONArray contents = new JSONArray(listViewItem.getContent());
             for (int i = 0; i < contents.length(); i++) {
-                contentForEndUser += i + ". " + contents.get(i) + "\n";
+                contentForEndUser += "- " + contents.get(i) + "\n";
             }
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
         contentTextView.setText(contentForEndUser);
+        titleTextView.setText(listViewItem.getTitle());
+        summaryTextView.setText(listViewItem.getSummary());
         author.setText(listViewItem.getAuthor());
         idHolder.setText(listViewItem.getId());
 

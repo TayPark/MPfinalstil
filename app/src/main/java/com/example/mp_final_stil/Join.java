@@ -41,10 +41,7 @@ public class Join extends AppCompatActivity {
 
             RequestQueue queue = Volley.newRequestQueue(Join.this);
             String url = "http://15.164.96.105:8080/user/join";
-            JsonObjectRequest joinRequest = new JsonObjectRequest(
-                    Request.Method.POST, url, joinAccount
-                    , response -> {
-                Log.d("join-success", response.toString());
+            queue.add(new JsonObjectRequest(Request.Method.POST, url, joinAccount, response -> {
                 try {
                     if (response.get("ok").toString().equals("1")) {
                         Toast.makeText(Join.this, "Joined successfully. Please Login.", Toast.LENGTH_SHORT).show();
@@ -63,9 +60,7 @@ public class Join extends AppCompatActivity {
                 } else {
                     Toast.makeText(Join.this, String.valueOf(error), Toast.LENGTH_SHORT).show();
                 }
-            });
-
-            queue.add(joinRequest);
+            }));
         });
     }
 }

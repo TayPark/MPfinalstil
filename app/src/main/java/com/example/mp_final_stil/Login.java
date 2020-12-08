@@ -44,7 +44,7 @@ public class Login extends AppCompatActivity {
         RequestQueue queue = Volley.newRequestQueue(Login.this);
         String url = "http://15.164.96.105:8080/user/login";
 
-        /* Auto-login */
+        /* Auto login */
         if (autoEmail != null && autoPassword != null) {
             try {
                 userData.put("email", autoEmail);
@@ -53,13 +53,11 @@ public class Login extends AppCompatActivity {
                 e.printStackTrace();
             }
 
-            JsonObjectRequest autoLoginRequest = new JsonObjectRequest(
-                    Request.Method.POST, url, userData
-                    , response -> {
+            queue.add(new JsonObjectRequest(Request.Method.POST, url, userData, response -> {
                 Log.d("login-success", response.toString());
                 try {
                     if (response.get("ok").toString().equals("1")) {
-                        Toast.makeText(Login.this, "Logined with " + userData.getString("email"), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(Login.this, "Login with " + userData.getString("email"), Toast.LENGTH_SHORT).show();
                         Intent intent = new Intent(getApplicationContext(), Main.class);
                         startActivity(intent);
                     } else {
@@ -76,9 +74,7 @@ public class Login extends AppCompatActivity {
                 } else {
                     Toast.makeText(Login.this, "Unexpected error: " + error, Toast.LENGTH_SHORT).show();
                 }
-            });
-
-            queue.add(autoLoginRequest);
+            }));
         }
 
         /* Login process */
@@ -90,13 +86,10 @@ public class Login extends AppCompatActivity {
                 e.printStackTrace();
             }
 
-            JsonObjectRequest loginRequest = new JsonObjectRequest(
-                    Request.Method.POST, url, userData
-                    , response -> {
-                Log.d("login-success", response.toString());
+            queue.add(new JsonObjectRequest(Request.Method.POST, url, userData, response -> {
                 try {
                     if (response.get("ok").toString().equals("1")) {
-                        Toast.makeText(Login.this, "Logined with " + userData.getString("email"), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(Login.this, "Login with " + userData.getString("email"), Toast.LENGTH_SHORT).show();
                         editor.putString("email", emailEt.getText().toString());
                         editor.putString("password", passwordEt.getText().toString());
                         editor.apply();
@@ -115,14 +108,11 @@ public class Login extends AppCompatActivity {
                 } else {
                     Toast.makeText(Login.this, "Unexpected error: " + error, Toast.LENGTH_SHORT).show();
                 }
-            });
-
-            queue.add(loginRequest);
+            }));
         });
 
         /* Join process */
         joinBtn.setOnClickListener(v -> {
-            // clear SharedPreference
             editor.clear();
             editor.commit();
             Intent intent = new Intent(getApplicationContext(), Join.class);

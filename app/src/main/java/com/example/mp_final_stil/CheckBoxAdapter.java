@@ -61,12 +61,19 @@ public class CheckBoxAdapter extends BaseAdapter {
         checkBoxItems.add(item);
     }
 
-    /* If android render fragment(ListView), call this method. */
+    /**
+     * Render items when user select TabMy.
+     *
+     * @param position    - Position on parent view
+     * @param convertView - Item view to be made
+     * @param parent      - Parent view group(layout)
+     * @return convertView
+     */
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         Context context = parent.getContext();
 
-        /* To inflate view, request components(service and inflater) that inflate view */
+        /* To render item onto parent view group, inflate view with inflater service in parent context */
         if (convertView == null) {
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             convertView = inflater.inflate(R.layout.checkbox_item, parent, false);
