@@ -38,18 +38,6 @@ public class TabBookmark extends ListFragment {
         // Required empty public constructor
     }
 
-    public TabBookmark(JSONArray response) {
-        JSONObject temp;
-        for (int i = 0; i < response.length(); i++) {
-            try {
-                temp = response.getJSONObject(i);
-                this.items.add(temp);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
     public void updateItem(JSONArray data) {
         this.items.clear();
         JSONObject temp;
@@ -107,6 +95,12 @@ public class TabBookmark extends ListFragment {
 
     @Override
     public void onListItemClick(@NonNull ListView l, @NonNull View v, int position, long id) {
+        /* Close all opened content */
+        for (int i = 0; i <l.getChildCount(); i++) {
+            View each = l.getChildAt(i);
+            each.findViewById(R.id.closeBtn).performClick();
+        }
+
         /* View/Button getters */
         titleTextView = v.findViewById(R.id.titleTextView);
         summaryTextView = v.findViewById(R.id.summaryTextView);

@@ -45,11 +45,6 @@ public class TabMy extends ListFragment {
         }
     }
 
-    public static TabMy newInstance(JSONArray items) {
-        TabMy fragment = new TabMy(items);
-        return fragment;
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
