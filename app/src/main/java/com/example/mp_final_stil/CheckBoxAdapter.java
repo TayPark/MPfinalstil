@@ -61,17 +61,18 @@ public class CheckBoxAdapter extends BaseAdapter {
         checkBoxItems.add(item);
     }
 
-    /* 뷰가 렌더링 될 때 호출되는 코드 */
+    /* If android render fragment(ListView), call this method. */
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         Context context = parent.getContext();
 
-        /* 뷰를 inflate 하기 위해 서비스와 인플레이터를 호출 함 */
+        /* To inflate view, request components(service and inflater) that inflate view */
         if (convertView == null) {
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             convertView = inflater.inflate(R.layout.checkbox_item, parent, false);
         }
 
+        /* Initially set proper position on every CheckBoxItems */
         CheckBox checkBox = convertView.findViewById(R.id.checkBox);
         CheckBoxItem checkBoxItem = checkBoxItems.get(position);
         checkBox.setText(checkBoxItem.getContent());
@@ -81,95 +82,62 @@ public class CheckBoxAdapter extends BaseAdapter {
             checkBox.setBackgroundColor(Color.parseColor("#c4c4c4"));
         }
 
+        /* Mongoose ObjectId holder */
         TextView idHolder = convertView.findViewById(R.id.checkBoxId);
         idHolder.setText(checkBoxItem.getId());
 
+        /* CheckBox check on/off */
         checkBox.setOnClickListener(v -> {
-            if (checkBox.isChecked()) {
-                checkBox.setPaintFlags(Paint.STRIKE_THRU_TEXT_FLAG);
-                checkBox.setBackgroundColor(Color.parseColor("#c4c4c4"));
+            JSONObject requestBody = new JSONObject();
+            SharedPreferences userAccount = context.getSharedPreferences("autoLogin", Context.MODE_PRIVATE);
 
-                JSONObject requestBody = new JSONObject();
-                SharedPreferences userAccount = context.getSharedPreferences("autoLogin", Context.MODE_PRIVATE);
+            try {
+                requestBody.put("author", userAccount.getString("email", null));
+                requestBody.put("itemId", idHolder.getText().toString());
 
-                try {
-                    requestBody.put("author", userAccount.getString("email", null));
+                if (checkBox.isChecked()) {
+                    checkBox.setPaintFlags(Paint.STRIKE_THRU_TEXT_FLAG);
+                    checkBox.setBackgroundColor(Color.parseColor("#c4c4c4"));
                     requestBody.put("toggle", true);
-                    requestBody.put("itemId", ((TextView) ((ViewGroup) checkBox.getParent()).getChildAt(0)).getText().toString());
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-
-                Log.d("checkBoxId", ((TextView) ((ViewGroup) checkBox.getParent()).getChildAt(0)).getText().toString());
-
-                RequestQueue queue = Volley.newRequestQueue(context);
-                String url = "http://15.164.96.105:8080/stil/check";
-                JsonObjectRequest deleteRequest = new JsonObjectRequest(Request.Method.PATCH, url, requestBody, response -> {
-                    try {
-                        if (response.getString("ok").equals("1")) {
-                            Toast.makeText(context, "Checked successfully.", Toast.LENGTH_SHORT).show();
-                        }
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                    Log.d("DEBUG/Main-deploy", response.toString());
-                }, error -> {
-                    Toast.makeText(context, "Unexpected error: " + error, Toast.LENGTH_SHORT).show();
-                    Log.e("DEBUG/Main-deploy", error.toString());
-                });
-                queue.add(deleteRequest);
-
-            } else {
-                checkBox.setPaintFlags(0);
-                checkBox.setBackgroundColor(Color.WHITE);
-
-                JSONObject requestBody = new JSONObject();
-                SharedPreferences userAccount = context.getSharedPreferences("autoLogin", Context.MODE_PRIVATE);
-
-                try {
-                    requestBody.put("author", userAccount.getString("email", null));
+                } else {
+                    checkBox.setPaintFlags(0);
+                    checkBox.setBackgroundColor(Color.WHITE);
                     requestBody.put("toggle", false);
-                    requestBody.put("itemId", ((TextView) ((ViewGroup) checkBox.getParent()).getChildAt(0)).getText().toString());
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            RequestQueue queue = Volley.newRequestQueue(context);
+            String url = "http://15.164.96.105:8080/stil/check";
+            queue.add(new JsonObjectRequest(Request.Method.PATCH, url, requestBody, response -> {
+                try {
+                    if (response.getString("ok").equals("1")) {
+                        Toast.makeText(context, "Checked successfully.", Toast.LENGTH_SHORT).show();
+                    }
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-
-                Log.d("checkBoxId", ((TextView) ((ViewGroup) checkBox.getParent()).getChildAt(0)).getText().toString());
-
-                RequestQueue queue = Volley.newRequestQueue(context);
-                String url = "http://15.164.96.105:8080/stil/check";
-                JsonObjectRequest deleteRequest = new JsonObjectRequest(Request.Method.PATCH, url, requestBody, response -> {
-                    try {
-                        if (response.getString("ok").equals("1")) {
-                            Toast.makeText(context, "Checked successfully.", Toast.LENGTH_SHORT).show();
-                        }
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                    Log.d("DEBUG/Main-deploy", response.toString());
-                }, error -> {
-                    Toast.makeText(context, "Unexpected error: " + error, Toast.LENGTH_SHORT).show();
-                    Log.e("DEBUG/Main-deploy", error.toString());
-                });
-                queue.add(deleteRequest);
-            }
+                Log.d("DEBUG/Main-deploy", response.toString());
+            }, error -> {
+                Toast.makeText(context, "Unexpected error: " + error, Toast.LENGTH_SHORT).show();
+                Log.e("DEBUG/Main-deploy", error.toString());
+            }));
         });
 
+        /* Edit/Delete feature on long click */
         checkBox.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
                 AlertDialog.Builder dialog = new AlertDialog.Builder(context);
                 dialog.setTitle("Select action");
 
-                /* 삭제 이벤트리스너 */
+                /* Delete listener */
                 dialog.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         AlertDialog.Builder deleteDialog = new AlertDialog.Builder(context);
                         deleteDialog.setTitle("Delete TIL");
-
-                        /* 체크박스 뷰어 홀더 getter */
-                        ViewGroup viewGroup = (ViewGroup) checkBox.getParent().getParent();
 
                         deleteDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                             @Override
@@ -179,15 +147,14 @@ public class CheckBoxAdapter extends BaseAdapter {
 
                                 try {
                                     requestBody.put("author", userAccount.getString("email", null));
-                                    requestBody.put("itemId", ((TextView) ((ViewGroup) checkBox.getParent()).getChildAt(0)).getText().toString());
+                                    requestBody.put("itemId", idHolder.getText().toString());
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 }
 
-                                /* 데이터 삭제 요청 */
                                 RequestQueue queue = Volley.newRequestQueue(context);
                                 String url = "http://15.164.96.105:8080/stil/pull";
-                                JsonObjectRequest deleteRequest = new JsonObjectRequest(Request.Method.PATCH, url, requestBody, response -> {
+                                queue.add(new JsonObjectRequest(Request.Method.PATCH, url, requestBody, response -> {
                                     try {
                                         if (response.getString("ok").equals("1")) {
                                             TabMy frag = (TabMy) Main.viewpagerAdapter.getItem(0);
@@ -203,14 +170,13 @@ public class CheckBoxAdapter extends BaseAdapter {
                                 }, error -> {
                                     Toast.makeText(context, "Unexpected error: " + error, Toast.LENGTH_SHORT).show();
                                     Log.e("DEBUG/Main-deploy", error.toString());
-                                });
-                                queue.add(deleteRequest);
+                                }));
                             }
                         });
                         deleteDialog.setNegativeButton("Cancel", null);
                         deleteDialog.show();
                     }
-                    /* On Edit action */
+                    /* Edit listener */
                 }).setNegativeButton("Edit", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -223,23 +189,20 @@ public class CheckBoxAdapter extends BaseAdapter {
                         editDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                checkBox.setText(editText.getText().toString());
-
                                 JSONObject requestBody = new JSONObject();
                                 SharedPreferences userAccount = context.getSharedPreferences("autoLogin", Context.MODE_PRIVATE);
 
                                 try {
                                     requestBody.put("author", userAccount.getString("email", null));
-                                    requestBody.put("itemId", ((TextView) ((ViewGroup) checkBox.getParent()).getChildAt(0)).getText().toString());
-                                    requestBody.put("content", checkBox.getText().toString());
+                                    requestBody.put("itemId", idHolder.getText().toString());
+                                    requestBody.put("content", editText.getText().toString());
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 }
 
-                                /* 수정 요청 */
                                 RequestQueue queue = Volley.newRequestQueue(context);
                                 String url = "http://15.164.96.105:8080/stil/edit";
-                                JsonObjectRequest deployRequest = new JsonObjectRequest(Request.Method.PATCH, url, requestBody, response -> {
+                                queue.add(new JsonObjectRequest(Request.Method.PATCH, url, requestBody, response -> {
                                     try {
                                         if (response.getString("ok").equals("1")) {
                                             TabMy frag = (TabMy) Main.viewpagerAdapter.getItem(0);
@@ -255,8 +218,7 @@ public class CheckBoxAdapter extends BaseAdapter {
                                 }, error -> {
                                     Toast.makeText(context, "Unexpected error: " + error, Toast.LENGTH_SHORT).show();
                                     Log.e("DEBUG/Main-deploy", error.toString());
-                                });
-                                queue.add(deployRequest);
+                                }));
                             }
                         });
                         editDialog.setNegativeButton("Cancel", null);
@@ -267,7 +229,6 @@ public class CheckBoxAdapter extends BaseAdapter {
                 return true;
             }
         });
-
         return convertView;
     }
 
